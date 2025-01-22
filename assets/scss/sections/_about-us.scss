@@ -1,0 +1,31 @@
+// main: ../main.scss
+/*--------------------------------------------------------------
+# About Us Section
+--------------------------------------------------------------*/
+.about-us {
+  .content {
+    h3 {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        padding-bottom: 10px;
+      }
+
+      i {
+        font-size: 1.25rem;
+        margin-right: 4px;
+        color: var(--accent-color);
+      }
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

@@ -1,0 +1,65 @@
+// main: ../main.scss
+/*--------------------------------------------------------------
+# Events Section
+--------------------------------------------------------------*/
+.events {
+  .card {
+    background-color: var(--background-color);
+    border: 0;
+    padding: 0 30px;
+    margin-bottom: 60px;
+    position: relative;
+  }
+
+  .card-img {
+    width: calc(100% + 60px);
+    margin-left: -30px;
+    overflow: hidden;
+    z-index: 9;
+    border-radius: 0;
+
+    img {
+      max-width: 100%;
+      transition: all 0.3s ease-in-out;
+    }
+  }
+
+  .card-body {
+    z-index: 10;
+    background: var(--surface-color);
+    border-top: 4px solid var(--surface-color);
+    padding: 30px;
+    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.10);
+    margin-top: -60px;
+    transition: 0.3s;
+  }
+
+  .card-title {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+
+    a {
+      color: var(--default-color);
+      transition: 0.3s;
+    }
+  }
+
+  .card-text {
+    color: color-mix(in srgb, var(--default-color), transparent 30%);
+  }
+
+  .card:hover {
+    img {
+      transform: scale(1.1);
+    }
+
+    .card-body {
+      border-color: var(--accent-color);
+
+      .card-title a {
+        color: var(--accent-color);
+      }
+    }
+  }
+}

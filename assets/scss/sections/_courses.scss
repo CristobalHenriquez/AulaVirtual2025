@@ -1,0 +1,83 @@
+// main: ../main.scss
+/*--------------------------------------------------------------
+# Courses Section
+--------------------------------------------------------------*/
+.courses {
+  .course-item {
+    background-color: var(--surface-color);
+    border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+    border-radius: 5px;
+  }
+
+  .course-content {
+    padding: 15px;
+
+    h3 {
+      font-weight: 700;
+      font-size: 20px;
+
+      a {
+        color: var(--heading-color);
+        transition: 0.3s;
+
+        &:hover {
+          color: var(--accent-color);
+        }
+      }
+    }
+
+    .category {
+      background: var(--accent-color);
+      color: var(--contrast-color);
+      font-size: 14px;
+      padding: 6px 14px;
+      margin: 0;
+      border-radius: 5px;
+    }
+
+    .price {
+      margin: 0;
+      font-weight: 700;
+      font-size: 18px;
+      color: color-mix(in srgb, var(--default-color), transparent 20%);
+    }
+
+    .description {
+      font-size: 14px;
+      color: color-mix(in srgb, var(--default-color), transparent 20%);
+    }
+  }
+
+  .trainer {
+    padding-top: 15px;
+    border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+
+    .trainer-profile {
+      img {
+        max-width: 50px;
+        border-radius: 50px;
+      }
+
+      .trainer-link {
+        padding-left: 10px;
+        font-weight: 600;
+        font-size: 16px;
+        color: color-mix(in srgb, var(--default-color), transparent 20%);
+        transition: 0.3s;
+
+        &:hover {
+          color: var(--accent-color);
+        }
+      }
+    }
+
+    .trainer-rank {
+      font-size: 18px;
+      color: color-mix(in srgb, var(--default-color), transparent 60%);
+
+      .user-icon {
+        font-size: 22px;
+      }
+    }
+  }
+}

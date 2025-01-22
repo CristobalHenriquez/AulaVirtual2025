@@ -1,0 +1,59 @@
+// main: ../main.scss
+/*--------------------------------------------------------------
+# Courses Course Details Section
+--------------------------------------------------------------*/
+.courses-course-details {
+  padding-bottom: 20px;
+
+  h3 {
+    font-size: 24px;
+    margin: 30px 0 15px 0;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 10px;
+
+    &:before {
+      content: '';
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: color-mix(in srgb, var(--default-color), transparent 90%);
+      bottom: 0;
+      left: 0;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      width: 60px;
+      height: 1px;
+      background: var(--accent-color);
+      bottom: 0;
+      left: 0;
+    }
+  }
+
+  .course-info {
+    background: color-mix(in srgb, var(--default-color), transparent 95%);
+    padding: 10px 15px;
+    margin-bottom: 15px;
+
+    h5 {
+      font-weight: 400;
+      font-size: 16px;
+      margin: 0;
+      font-family: var(--nav-font);
+    }
+
+    p {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    a {
+      color: var(--accent-color);
+    }
+  }
+}
