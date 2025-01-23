@@ -1607,3 +1607,33 @@ section,
 .starter-section {
   /* Add your styles here */
 }
+
+/* STUDENT */
+.student-panel {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+.accordion-button:not(.collapsed) {
+  background-color: #e7f1ff;
+  color: #0c63e4;
+}
+.module-content {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  margin: 0.5rem 0;
+}
+.agenda-section {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+.btn-material {
+  text-decoration: none;
+  color: white;
+}
