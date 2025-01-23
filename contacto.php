@@ -13,7 +13,7 @@ include_once 'includes/head.php';
   <main class="main">
     <?php
     //INCLUYO CONTACTO
-    include_once 'includes/contacto.php';
+    include_once 'templates/contacto-main.php';
     ?>
   </main>
 
