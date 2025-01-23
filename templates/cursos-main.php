@@ -1,19 +1,26 @@
+<!-- Page Title -->
+<div class="page-title" data-aos="fade">
+    <div class="heading">
+        <div class="container">
+            <div class="row d-flex justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h1>Cursos</h1>
+                    <p class="mb-0">Explora nuestra amplia gama de cursos y encuentra el que necesitas para llevar tu carrera al siguiente nivel.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- End Page Title -->
+
 <!-- Courses Section -->
 <section id="courses" class="courses section">
-    <!-- Section Title -->
-    <div class="container section-title" data-aos="fade-up">
-        <h2>Cursos</h2>
-        <p>Cursos recientes</p>
-    </div><!-- End Section Title -->
-
     <div class="container">
         <div class="row">
             <?php
             // Consulta para obtener los 3 cursos más recientes
             $sql = "SELECT titulo, descripcion, imagen_path, programa_pdf_path, cantidad_horas 
-                    FROM cursos 
-                    ORDER BY created_at DESC 
-                    LIMIT 3";
+                FROM cursos 
+                ORDER BY created_at DESC ";
             $result = $db->query($sql);
 
             // Verificar si hay resultados
