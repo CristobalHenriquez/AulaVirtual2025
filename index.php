@@ -22,8 +22,6 @@ include_once 'includes/header.php';
     include_once 'templates/contador.php';
     //INCLUYO CURSOS
     include_once 'templates/cursos-home.php';
-    //INCLUYO CONTACTO
-    include_once 'includes/contacto.php';
     ?>
 
   </main>
