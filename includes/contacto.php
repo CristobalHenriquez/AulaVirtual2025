@@ -1,5 +1,5 @@
 <!-- Page Title -->
-<div class="page-title" data-aos="fade">
+<div class="page-title" id="contacto" data-aos="fade">
     <div class="heading">
         <div class="container">
             <div class="row d-flex justify-content-center text-center">

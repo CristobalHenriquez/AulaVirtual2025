@@ -9,8 +9,8 @@
         <nav id="navmenu" class="navmenu">
             <ul>
                 <li><a href="index.php" class="active">Inicio<br></a></li>
-                <li><a href="cursos.php">Cursos</a></li>
-                <li><a href="contacto.php">Contacto</a></li>
+                <li><a href="courses.php">Cursos</a></li>
+                <li><a href="#contacto">Contacto</a></li>
                 <!-- <li><a href="login.php">Ingresar</a></li> -->
             </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
