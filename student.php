@@ -47,7 +47,7 @@ function obtenerModulos($db, $curso_id)
 ?>
 
 
-<body class="bg-light">
+<body class="" style="background-image: url('assets/img/student-bg.jpg'); background-size: cover;">
 
     <?php
     //INCLUYO HEADER

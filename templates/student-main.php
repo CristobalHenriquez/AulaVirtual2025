@@ -1,3 +1,17 @@
+<!-- Page Title -->
+<div class="page-title" data-aos="fade">
+    <div class="heading p-4">
+        <div class="container">
+            <div class="row d-flex justify-content-center text-center">
+                <div class="col-lg-6">
+                    <h1>Panel de estudiantes</h1>
+                    <p class="mb-0">Accede a tu información y cursos inscritos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- End Page Title -->
+
 <div class="student-panel">
     <div class="text-center mb-5">
         <h1>¡Bienvenido al aula virtual, <?php echo htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellidos']); ?>!</h1>
@@ -25,20 +39,22 @@
                                         <button class="accordion-button collapsed" type="button"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#curso<?php echo $curso['id']; ?>">
-                                            <?php echo htmlspecialchars($curso['titulo']); ?> /
-                                            <?php echo date('F Y', strtotime($curso['created_at'])); ?>
+                                            <?php echo htmlspecialchars($curso['titulo']); ?>
                                         </button>
                                     </h2>
                                     <div id="curso<?php echo $curso['id']; ?>"
                                         class="accordion-collapse collapse"
                                         data-bs-parent="#cursosAccordion<?php echo $anio; ?>">
                                         <div class="accordion-body">
-                                            <p><?php echo nl2br(htmlspecialchars($curso['descripcion'])); ?></p>
+                                            <div class="text-center mb-3">
+                                                <img src="<?php echo htmlspecialchars($curso['imagen_path']); ?>" alt="Imagen del curso" class="img-fluid rounded-2 m-2" style="height: auto; width: 500px;">
+                                            </div>
+                                            <p style="text-align: justify;"><?php echo nl2br(htmlspecialchars($curso['descripcion'])); ?></p>
 
                                             <?php if ($curso['programa_pdf_path']): ?>
                                                 <div class="mb-3">
                                                     <a href="<?php echo htmlspecialchars($curso['programa_pdf_path']); ?>"
-                                                        class="btn btn-primary" target="_blank">
+                                                        class="btn btn-success" target="_blank">
                                                         Ver Programa Completo
                                                     </a>
                                                 </div>
