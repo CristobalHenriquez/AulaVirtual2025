@@ -25,7 +25,7 @@
         <?php foreach ($cursos_por_anio as $anio => $cursos): ?>
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
                         data-bs-target="#anio<?php echo $anio; ?>">
                         <?php echo $anio; ?>
                     </button>

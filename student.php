@@ -47,13 +47,13 @@ function obtenerModulos($db, $curso_id)
 ?>
 
 
-<body class="" style="background-image: url('assets/img/student-bg.jpg'); background-size: cover;">
+<body class="">
 
     <?php
     //INCLUYO HEADER
     include_once 'includes/header.php';
     ?>
-    <main>
+    <main class="pb-5" style="background-image: url('assets/img/student-bg.jpg'); background-size: cover">
         <?php
         include_once 'templates/student-main.php';
         ?>
