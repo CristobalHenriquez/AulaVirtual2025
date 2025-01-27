@@ -10,7 +10,6 @@
 
     <!-- Favicons -->
     <link href="/assets/img/aula-logo.ico" rel="E-Learning">
-    <link href="/assets/img/aula-logo.ico" rel="E-Learning">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -24,12 +23,15 @@
     <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet">
+
+    <!-- jQuery (necesario para Bootstrap y DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
 </head>
 
