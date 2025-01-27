@@ -14,8 +14,8 @@ $stmt->execute();
 $result = $stmt->get_result();
 $alumnos = $result->fetch_all(MYSQLI_ASSOC);
 
-// Obtener todos los cursos para el modal
-$stmt = $db->prepare("SELECT id, titulo FROM cursos ORDER BY titulo ASC");
+// Obtener todos los cursos para el modal, ordenados por fecha de creación descendente
+$stmt = $db->prepare("SELECT id, titulo FROM cursos ORDER BY created_at DESC");
 $stmt->execute();
 $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -42,7 +42,7 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 <td><?php echo htmlspecialchars($alumno['email']); ?></td>
                                 <td>
                                     <?php if ($alumno['cursos_inscritos']): ?>
-                                        <ul class="list-unstyled mb-0">
+                                        <ul class="mb-0">
                                             <?php foreach (explode('||', $alumno['cursos_inscritos']) as $curso): ?>
                                                 <li><?php echo htmlspecialchars($curso); ?></li>
                                             <?php endforeach; ?>
@@ -57,7 +57,7 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                         data-nombre="<?php echo htmlspecialchars($alumno['nombre']); ?>"
                                         data-apellidos="<?php echo htmlspecialchars($alumno['apellidos']); ?>"
                                         data-email="<?php echo htmlspecialchars($alumno['email']); ?>"
-                                        data-cursos="<?php echo htmlspecialchars($alumno['cursos_inscritos']); ?>">
+                                        data-cursos="<?php echo htmlspecialchars($alumno['curso_ids']); ?>">
                                         <i class="bi bi-pencil-fill"></i>
                                     </button>
                                     <button class="btn btn-danger btn-circle btn-sm eliminar-alumno"
@@ -99,10 +99,16 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Cursos</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="selectAllCursos">
+                            <label class="form-check-label" for="selectAllCursos">
+                                Seleccionar/Deseleccionar todos
+                            </label>
+                        </div>
                         <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
                             <?php foreach ($cursos as $curso): ?>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"
+                                    <input class="form-check-input curso-checkbox" type="checkbox"
                                         name="cursos[]"
                                         value="<?php echo $curso['id']; ?>"
                                         id="curso_<?php echo $curso['id']; ?>">
@@ -155,6 +161,7 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar DataTable (sin cambios)
@@ -208,5 +215,48 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.show();
         });
     });
+
+    // Manejar el checkbox de seleccionar/deseleccionar todos
+    document.getElementById('selectAllCursos').addEventListener('change', function() {
+        const isChecked = this.checked;
+        document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+    });
+
+    // Manejar el clic en el botón de eliminar
+    document.querySelectorAll('.eliminar-alumno').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción no se puede deshacer",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Confirmar eliminación',
+                        text: "Por favor, confirma nuevamente que deseas eliminar este alumno",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, eliminar definitivamente',
+                        cancelButtonText: 'Cancelar'
+                    }).then((secondResult) => {
+                        if (secondResult.isConfirmed) {
+                            window.location.href = `controladores/eliminar_alumno.php?id=${id}`;
+                        }
+                    });
+                }
+            });
+        });
+    });
 });
 </script>
+
