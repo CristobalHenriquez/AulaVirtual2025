@@ -81,6 +81,42 @@
                                                                 <div class="module-content">
                                                                     <?php echo nl2br(htmlspecialchars($modulo['descripcion'])); ?>
                                                                 </div>
+
+                                                                <!-- Recursos del módulo -->
+                                                                <h5 class="mt-3">Recursos:</h5>
+                                                                <ul class="list-group">
+                                                                    <?php
+                                                                    $recursos = obtenerRecursosModulo($db, $modulo['id']);
+                                                                    foreach ($recursos as $recurso):
+                                                                        $enlace = $recurso['es_local'] ? $recurso['archivo_path'] : $recurso['url'];
+                                                                        $nombreRecurso = $recurso['descripcion'] ? $recurso['descripcion'] : basename($enlace);
+                                                                        $tipo = $recurso['tipo_real'];
+                                                                        $icono = obtenerIconoRecurso($tipo);
+                                                                    ?>
+                                                                        <li class="list-group-item">
+                                                                            <?php if ($tipo === 'video'): ?>
+                                                                                <div class="embed-responsive embed-responsive-16by9 mb-2">
+                                                                                    <?php if ($recurso['es_local']): ?>
+                                                                                        <video class="embed-responsive-item rounded-1" style="width: 300px;" controls>
+                                                                                            <source src="<?php echo htmlspecialchars($enlace); ?>" type="video/mp4">
+                                                                                            Tu navegador no soporta el elemento de video.
+                                                                                        </video>
+                                                                                    <?php else: ?>
+                                                                                        <iframe class="embed-responsive-item" src="<?php echo htmlspecialchars($enlace); ?>" allowfullscreen></iframe>
+                                                                                    <?php endif; ?>
+                                                                                </div>
+                                                                            <?php elseif ($tipo === 'imagen'): ?>
+                                                                                <img src="<?php echo htmlspecialchars($enlace); ?>" class="img-fluid mb-2 rounded-2" style="width: 300px;" alt="<?php echo htmlspecialchars($nombreRecurso); ?>">
+                                                                            <?php else: ?>
+                                                                                <a href="<?php echo htmlspecialchars($enlace); ?>" target="_blank" class="d-flex align-items-center text-decoration-none">
+                                                                                    <i class="<?php echo $icono; ?> me-2"></i>
+                                                                                    <?php echo htmlspecialchars($nombreRecurso); ?>
+                                                                                </a>
+                                                                            <?php endif; ?>
+                                                                            <span class="badge bg-secondary"><?php echo htmlspecialchars($tipo); ?></span>
+                                                                        </li>
+                                                                    <?php endforeach; ?>
+                                                                </ul>
                                                             </div>
                                                         </div>
                                                     </div>

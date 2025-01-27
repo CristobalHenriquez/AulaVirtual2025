@@ -24,13 +24,16 @@
     <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-    
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet">
 
 </head>
 
 <!-- INCLUYO LA CONEXION -->
-<?php 
+<?php
 include_once 'conexion.php';
 ?>
