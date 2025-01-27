@@ -19,13 +19,34 @@ $stmt = $db->prepare("SELECT id, titulo FROM cursos ORDER BY created_at DESC");
 $stmt->execute();
 $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
-
+<!-- Page Title -->
+<div class="page-title" data-aos="fade">
+    <div class="heading">
+        <div class="container">
+            <div class="row d-flex justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h1>Panel administrador de Alumnos</h1>
+                    <p class="mb-0">Gestiona los alumnos desde aqui, cambiando sus datos o agregando cursos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- End Page Title -->
+<!-- Add this right after the page title div and before the container-fluid div -->
+<div class="container-fluid col-lg-10 pt-3">
+    <div class="d-flex justify-content-end">
+        <a href="nuevo-alumno.php" class="btn btn-success">
+            <i class="bi bi-person-plus-fill me-2"></i>Agregar Usuario
+        </a>
+    </div>
+</div>
+<!-- Rest of the existing code remains the same -->
 <div class="container-fluid col-lg-10 py-5">
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
                 <table id="tablaAlumnos" class="table table-striped">
-                    <thead class="bg-primary text-white">
+                    <thead>
                         <tr>
                             <th>Nombre y apellido</th>
                             <th>Municipio/Empresa</th>
