@@ -19,7 +19,7 @@ $stmt = $db->prepare("SELECT id, titulo FROM cursos ORDER BY created_at DESC");
 $stmt->execute();
 $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
-<!-- Page Title -->
+<!-- TITULO -->
 <div class="page-title" data-aos="fade">
     <div class="heading">
         <div class="container">
@@ -31,17 +31,20 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
         </div>
     </div>
-</div><!-- End Page Title -->
-<!-- Add this right after the page title div and before the container-fluid div -->
+</div>
+<!-- BOTONES -->
 <div class="container-fluid col-lg-10 pt-3">
-    <div class="d-flex justify-content-end">
-        <a href="nuevo-alumno.php" class="btn btn-success">
+    <div class="d-flex justify-content-between">
+        <a href="admin.php" class="btn btn-secondary shadow">
+            <i class="bi bi-arrow-90deg-left me-2"></i>Volver a panel general
+        </a>
+        <a href="nuevo-alumno.php" class="btn btn-success shadow">
             <i class="bi bi-person-plus-fill me-2"></i>Agregar Usuario
         </a>
     </div>
 </div>
-<!-- Rest of the existing code remains the same -->
-<div class="container-fluid col-lg-10 py-5">
+<!-- CONTAINER -->
+<div class="container-fluid col-lg-10 py-3">
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -184,100 +187,102 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar DataTable (sin cambios)
-    new DataTable('#tablaAlumnos', {
-        language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
-        },
-        columnDefs: [
-            {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar DataTable (sin cambios)
+        new DataTable('#tablaAlumnos', {
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+            },
+            columnDefs: [{
                 targets: -1,
                 orderable: false,
                 searchable: false
-            }
-        ],
-        order: [[0, 'asc']],
-        pageLength: 10,
-        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-        dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rtip'
-    });
-
-    // Manejar el clic en el botón de editar
-    document.querySelectorAll('.editar-alumno').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const nombre = this.dataset.nombre;
-            const apellidos = this.dataset.apellidos;
-            const email = this.dataset.email;
-            const cursoIds = this.dataset.cursos ? this.dataset.cursos.split(',') : [];
-
-            // Limpiar checkboxes anteriores
-            document.querySelectorAll('input[name="cursos[]"]').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-
-            // Establecer valores en el formulario
-            document.getElementById('usuario_id').value = id;
-            document.getElementById('nombre').value = nombre;
-            document.getElementById('apellidos').value = apellidos;
-            document.getElementById('email').value = email;
-
-            // Marcar los checkboxes de los cursos del alumno
-            cursoIds.forEach(cursoId => {
-                const checkbox = document.getElementById(`curso_${cursoId}`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
-
-            // Mostrar el modal
-            const modal = new bootstrap.Modal(document.getElementById('editarUsuarioModal'));
-            modal.show();
+            }],
+            order: [
+                [0, 'asc']
+            ],
+            pageLength: 10,
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, "Todos"]
+            ],
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rtip'
         });
-    });
 
-    // Manejar el checkbox de seleccionar/deseleccionar todos
-    document.getElementById('selectAllCursos').addEventListener('change', function() {
-        const isChecked = this.checked;
-        document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
-            checkbox.checked = isChecked;
-        });
-    });
+        // Manejar el clic en el botón de editar
+        document.querySelectorAll('.editar-alumno').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const nombre = this.dataset.nombre;
+                const apellidos = this.dataset.apellidos;
+                const email = this.dataset.email;
+                const cursoIds = this.dataset.cursos ? this.dataset.cursos.split(',') : [];
 
-    // Manejar el clic en el botón de eliminar
-    document.querySelectorAll('.eliminar-alumno').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.dataset.id;
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Esta acción no se puede deshacer",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Confirmar eliminación',
-                        text: "Por favor, confirma nuevamente que deseas eliminar este alumno",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Sí, eliminar definitivamente',
-                        cancelButtonText: 'Cancelar'
-                    }).then((secondResult) => {
-                        if (secondResult.isConfirmed) {
-                            window.location.href = `controladores/eliminar_alumno.php?id=${id}`;
-                        }
-                    });
-                }
+                // Limpiar checkboxes anteriores
+                document.querySelectorAll('input[name="cursos[]"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                // Establecer valores en el formulario
+                document.getElementById('usuario_id').value = id;
+                document.getElementById('nombre').value = nombre;
+                document.getElementById('apellidos').value = apellidos;
+                document.getElementById('email').value = email;
+
+                // Marcar los checkboxes de los cursos del alumno
+                cursoIds.forEach(cursoId => {
+                    const checkbox = document.getElementById(`curso_${cursoId}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+
+                // Mostrar el modal
+                const modal = new bootstrap.Modal(document.getElementById('editarUsuarioModal'));
+                modal.show();
             });
         });
+
+        // Manejar el checkbox de seleccionar/deseleccionar todos
+        document.getElementById('selectAllCursos').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+        });
+
+        // Manejar el clic en el botón de eliminar
+        document.querySelectorAll('.eliminar-alumno').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción no se puede deshacer",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Confirmar eliminación',
+                            text: "Por favor, confirma nuevamente que deseas eliminar este alumno",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, eliminar definitivamente',
+                            cancelButtonText: 'Cancelar'
+                        }).then((secondResult) => {
+                            if (secondResult.isConfirmed) {
+                                window.location.href = `controladores/eliminar_alumno.php?id=${id}`;
+                            }
+                        });
+                    }
+                });
+            });
+        });
     });
-});
 </script>
-

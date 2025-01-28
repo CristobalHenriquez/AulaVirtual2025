@@ -4,13 +4,32 @@ $stmt = $db->prepare("SELECT id, titulo FROM cursos ORDER BY created_at DESC");
 $stmt->execute();
 $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
-
-<div class="container py-5">
+<!-- TITULO -->
+<div class="page-title" data-aos="fade">
+    <div class="heading p-5">
+        <div class="container">
+            <div class="row d-flex justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h1>Formulario para agregar un USUARIO<i class="bi bi-person"></i></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- BOTONES -->
+<div class="container-fluid col-lg-10 pt-3">
+    <div class="d-flex justify-content-start">
+        <a href="admin-alumnos.php" class="btn btn-secondary shadow">
+            <i class="bi bi-arrow-90deg-left me-2"></i>Volver a panel alumnos
+        </a>
+    </div>
+</div>
+<div class="container py-3">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card">
+            <div class="card shadow-lg">
                 <div class="card-header">
-                    <h3 class="card-title mb-0">Agregar Usuario</h3>
+                    <h3 class="card-title mb-0 text-center"><b>Agregar Usuario</b></h3>
                 </div>
                 <div class="card-body">
                     <form action="controladores/agregar_alumno.php" method="POST">
@@ -82,7 +101,7 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-success">Agregar Usuario</button>
-                            <a href="admin-alumnos.php" class="btn btn-secondary">Cancelar</a>
+                            <a href="admin-alumnos.php" class="btn btn-danger">Cancelar</a>
                         </div>
                     </form>
                 </div>
