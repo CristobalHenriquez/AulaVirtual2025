@@ -98,10 +98,14 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 Para seleccionar más de un curso, marca las casillas correspondientes.
                             </div>
                         </div>
-
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-success">Agregar Usuario</button>
-                            <a href="admin-alumnos.php" class="btn btn-danger">Cancelar</a>
+                        <!-- BOTONES -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-plus-circle me-2"></i>Agregar Usuario
+                            </button>
+                            <a href="admin-alumnos.php" class="btn btn-danger">
+                                <i class="bi bi-x-circle me-2"></i>Cancelar
+                            </a>
                         </div>
                     </form>
                 </div>
