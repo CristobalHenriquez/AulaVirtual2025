@@ -1,11 +1,8 @@
 <?php
+//VERIFICAR SESION
 session_start();
-
-// Verificar si el usuario está logueado
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("location: login.php");
-    exit;
-}
+require_once 'includes/auth.php';
+verificarAcceso();
 
 // Incluir conexión
 include_once 'includes/head.php';

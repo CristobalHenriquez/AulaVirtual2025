@@ -11,12 +11,9 @@ include_once 'includes/header.php';
 ?>
 
 <main class="main">
-
-    <!-- INCLUYO SECCIONES -->
     <?php
     include_once 'templates/login-main.php';
     ?>
-
 </main>
 
 <!-- FOOTER Y SCRIPTS -->
@@ -26,5 +23,4 @@ include_once 'includes/scripts.php';
 ?>
 
 </body>
-
 </html>

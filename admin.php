@@ -1,4 +1,7 @@
 <?php
+session_start();
+require_once 'includes/auth.php';
+verificarRolAdmin();
 //INCLUYO HEAD
 include_once 'includes/head.php';
 ?>

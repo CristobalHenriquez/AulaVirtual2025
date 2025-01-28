@@ -33,6 +33,8 @@
     <!-- jQuery (necesario para Bootstrap y DataTables) -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <!-- INCLUYO LA CONEXION -->
