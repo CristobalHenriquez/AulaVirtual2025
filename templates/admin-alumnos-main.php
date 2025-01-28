@@ -45,7 +45,7 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 </div>
 <!-- CONTAINER -->
 <div class="container-fluid col-lg-10 py-3">
-    <div class="card">
+    <div class="card shadow-lg">
         <div class="card-body">
             <div class="table-responsive">
                 <table id="tablaAlumnos" class="table table-striped">
