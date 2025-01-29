@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $form_insc = trim($_POST['form_insc']);
 
         // Crear directorios si no existen
-        $directorios = ['../uploads/cursos', '../uploads/programas'];
+        $directorios = ['../uploads/cursos', '../uploads/programas', '../uploads/recursos'];
         foreach ($directorios as $dir) {
             if (!file_exists($dir)) {
                 mkdir($dir, 0777, true);
@@ -131,10 +131,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Eliminar módulos que ya no existen
         $modulos_a_eliminar = array_diff($modulos_actuales, $modulos_a_mantener);
         foreach ($modulos_a_eliminar as $modulo_id) {
+            // Eliminar recursos asociados al módulo
+            $stmt = $db->prepare("SELECT archivo_path FROM recursos_modulo WHERE modulo_id = ?");
+            $stmt->bind_param("i", $modulo_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            while ($row = $result->fetch_assoc()) {
+                if ($row['archivo_path'] && file_exists('../' . $row['archivo_path'])) {
+                    unlink('../' . $row['archivo_path']);
+                }
+            }
+
+            // Eliminar registros de recursos del módulo
+            $stmt = $db->prepare("DELETE FROM recursos_modulo WHERE modulo_id = ?");
+            $stmt->bind_param("i", $modulo_id);
+            $stmt->execute();
+
             // Eliminar módulo
             $stmt = $db->prepare("DELETE FROM modulos WHERE id = ?");
             $stmt->bind_param("i", $modulo_id);
             $stmt->execute();
+        }
+
+        // Limpiar directorios vacíos
+        $directorios = ['../uploads/cursos', '../uploads/programas', '../uploads/recursos'];
+        foreach ($directorios as $dir) {
+            if (is_dir($dir)) {
+                $files = array_diff(scandir($dir), array('.', '..'));
+                if (empty($files)) {
+                    rmdir($dir);
+                }
+            }
         }
 
         $db->commit();
@@ -157,3 +184,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header('Location: ../admin-cursos.php');
     exit;
 }
+

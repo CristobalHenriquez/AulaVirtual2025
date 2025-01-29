@@ -53,9 +53,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['curso_id'])) {
         $stmt->bind_param("i", $curso_id);
         $stmt->execute();
 
+        // Limpiar directorios vacíos
+        $directorios = ['../uploads/cursos', '../uploads/programas', '../uploads/recursos'];
+        foreach ($directorios as $dir) {
+            if (is_dir($dir)) {
+                $files = array_diff(scandir($dir), array('.', '..'));
+                if (empty($files)) {
+                    rmdir($dir);
+                }
+            }
+        }
+
         $db->commit();
 
-        $_SESSION['mensaje'] = "Curso eliminado correctamente";
+        $_SESSION['mensaje'] = "Curso y todos sus recursos eliminados correctamente";
         $_SESSION['tipo_mensaje'] = "success";
     } catch (Exception $e) {
         $db->rollback();
@@ -70,3 +81,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['curso_id'])) {
 // Redirigir de vuelta a la página de administración de cursos
 header('Location: ../admin-cursos.php');
 exit;
+
