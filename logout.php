@@ -32,7 +32,7 @@ session_destroy();
             timer: 2000,
             showConfirmButton: false
         }).then(() => {
-            window.location.href = 'login.php';
+            window.location.href = 'InicioDeSesion';
         });
     </script>
 </body>

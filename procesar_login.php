@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Preparar respuesta JSON
                 $response = [
                     'success' => true,
-                    'redirect' => $usuario['rol'] === 'Administrador' ? 'admin.php' : 'student.php'
+                    'redirect' => $usuario['rol'] === 'Administrador' ? 'admin.php' : 'Alumno'
                 ];
             } else {
                 $response = [
@@ -56,6 +56,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit;
 } else {
     // Si no es una solicitud POST, redirigir a la página de inicio de sesión
-    header('Location: login.php');
+    header('Location: InicioDeSesion');
     exit;
 }

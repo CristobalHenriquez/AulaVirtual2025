@@ -1,0 +1,18 @@
+# Activar el motor de reescritura
+RewriteEngine On
+
+# Quitar la extensión .php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.+)$ $1.php [L,QSA]
+
+# Redirigir la raíz del sitio a index.php
+RewriteRule ^$ index.php [L]
+
+# Redirigir URLs amigables
+RewriteRule ^Cursos$ cursos.php [L]
+RewriteRule ^Contacto$ contacto.php [L]
+RewriteRule ^InicioDeSesion$ login.php [L]
+RewriteRule ^Inicio$ index.php [L]
+RewriteRule ^Alumno$ student.php [L]
+

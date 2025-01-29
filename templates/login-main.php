@@ -37,7 +37,7 @@
                             </div>
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-                                <button type="button" class="btn btn-secondary" onclick="window.location.href='index.php'">
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href='Inicio'">
                                     Cancelar
                                 </button>
                             </div>
