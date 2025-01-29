@@ -17,15 +17,6 @@ $stmt = $db->prepare("SELECT * FROM modulos WHERE curso_id = ? ORDER BY id ASC")
 $stmt->bind_param("i", $curso_id);
 $stmt->execute();
 $modulos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-// Obtener recursos de cada módulo
-$recursos_por_modulo = [];
-foreach ($modulos as $modulo) {
-    $stmt = $db->prepare("SELECT * FROM recursos_modulo WHERE modulo_id = ?");
-    $stmt->bind_param("i", $modulo['id']);
-    $stmt->execute();
-    $recursos_por_modulo[$modulo['id']] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-}
 ?>
 <style>
     .curso-form {
@@ -49,14 +40,6 @@ foreach ($modulos as $modulo) {
         border-radius: 0.25rem;
         padding: 1rem;
         margin-bottom: 1rem;
-    }
-
-    .recurso-item {
-        background-color: #ffffff;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        padding: 1rem;
-        margin-top: 1rem;
     }
 
     .collapse-toggle {
@@ -222,9 +205,14 @@ foreach ($modulos as $modulo) {
                                                 <i class="bi bi-chevron-down me-2"></i>
                                                 Módulo: <?php echo htmlspecialchars($modulo['titulo']); ?>
                                             </h5>
-                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarModulo(this)">
-                                                <i class="bi bi-trash"></i> Eliminar Módulo
-                                            </button>
+                                            <div>
+                                                <a href="editar_recursos.php?modulo_id=<?php echo $modulo['id']; ?>" class="btn btn-primary btn-sm me-2">
+                                                    <i class="bi bi-pencil-square"></i> Editar Recursos
+                                                </a>
+                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarModulo(this)">
+                                                    <i class="bi bi-trash"></i> Eliminar Módulo
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <div class="collapse show" id="modulo<?php echo $modulo['id']; ?>">
@@ -244,57 +232,6 @@ foreach ($modulos as $modulo) {
                                                     rows="3"
                                                     required><?php echo htmlspecialchars($modulo['descripcion']); ?></textarea>
                                             </div>
-
-                                            <!-- Recursos del módulo -->
-                                            <div class="recursos-container mt-4">
-                                                <h6 class="mb-3"><u>Recursos del Módulo</u></h6>
-                                                <?php if (isset($recursos_por_modulo[$modulo['id']])): ?>
-                                                    <?php foreach ($recursos_por_modulo[$modulo['id']] as $recurso): ?>
-                                                        <div class="recurso-item mb-3">
-                                                            <input type="hidden" name="recurso_ids[<?php echo $modulo['id']; ?>][]" value="<?php echo $recurso['id']; ?>">
-
-                                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                <h6 class="collapse-toggle" data-bs-toggle="collapse" data-bs-target="#recurso<?php echo $recurso['id']; ?>">
-                                                                    <i class="bi bi-chevron-down me-2"></i>
-                                                                    Recurso: <?php echo htmlspecialchars($recurso['descripcion']); ?>
-                                                                </h6>
-                                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarRecurso(this)">
-                                                                    <i class="bi bi-trash"></i> Eliminar Recurso
-                                                                </button>
-                                                            </div>
-
-                                                            <div class="collapse" id="recurso<?php echo $recurso['id']; ?>">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Descripción del Recurso</label>
-                                                                    <input type="text" class="form-control" name="recurso_descripciones[<?php echo $modulo['id']; ?>][]" value="<?php echo htmlspecialchars($recurso['descripcion']); ?>" required>
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Tipo de Recurso</label>
-                                                                    <select class="form-select" name="recurso_tipos[<?php echo $modulo['id']; ?>][]" onchange="toggleRecursoFields(this)" required>
-                                                                        <option value="url" <?php echo $recurso['tipo'] == 'url' ? 'selected' : ''; ?>>URL</option>
-                                                                        <option value="archivo" <?php echo $recurso['tipo'] == 'archivo' ? 'selected' : ''; ?>>Archivo</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="mb-3 recurso-url" style="display: <?php echo $recurso['tipo'] == 'url' ? 'block' : 'none'; ?>;">
-                                                                    <label class="form-label">URL del Recurso</label>
-                                                                    <input type="url" class="form-control" name="recurso_urls[<?php echo $modulo['id']; ?>][]" value="<?php echo htmlspecialchars($recurso['url']); ?>">
-                                                                </div>
-                                                                <div class="mb-3 recurso-archivo" style="display: <?php echo $recurso['tipo'] == 'archivo' ? 'block' : 'none'; ?>;">
-                                                                    <label class="form-label">Archivo del Recurso</label>
-                                                                    <?php if ($recurso['archivo_path']): ?>
-                                                                        <p>Archivo actual: <?php echo basename($recurso['archivo_path']); ?></p>
-                                                                    <?php endif; ?>
-                                                                    <input type="file" class="form-control" name="recurso_archivos[<?php echo $modulo['id']; ?>][]">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    <?php endforeach; ?>
-                                                <?php endif; ?>
-                                            </div>
-
-                                            <button type="button" class="btn btn-outline-primary btn-sm mt-3" onclick="agregarRecurso(this)">
-                                                <i class="bi bi-plus-circle me-2"></i>Agregar Recurso
-                                            </button>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -345,108 +282,25 @@ foreach ($modulos as $modulo) {
                 <label class="form-label">Descripción del Módulo</label>
                 <textarea class="form-control" name="modulo_descripciones[]" rows="3" required></textarea>
             </div>
-
-            <div class="recursos-container mt-4">
-                <h6 class="mb-3">Recursos del Módulo</h6>
-            </div>
-            
-            <button type="button" class="btn btn-outline-primary btn-sm mt-3" onclick="agregarRecurso(this)">
-                <i class="bi bi-plus-circle me-2"></i>Agregar Recurso
-            </button>
         </div>
     `;
 
         container.appendChild(moduloItem);
     }
 
-    function agregarRecurso(btn) {
-        const moduloItem = btn.closest('.modulo-item');
-        const recursosContainer = moduloItem.querySelector('.recursos-container');
-        const moduloId = moduloItem.querySelector('input[name="modulo_ids[]"]').value;
-        const recursoId = 'nuevo_' + Date.now();
-
-        const recursoItem = document.createElement('div');
-        recursoItem.className = 'recurso-item mb-3';
-
-        recursoItem.innerHTML = `
-        <input type="hidden" name="recurso_ids[${moduloId}][]" value="nuevo">
-        
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="collapse-toggle" data-bs-toggle="collapse" data-bs-target="#recurso${recursoId}">
-                <i class="bi bi-chevron-down me-2"></i>
-                Nuevo Recurso
-            </h6>
-            <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarRecurso(this)">
-                <i class="bi bi-trash"></i> Eliminar Recurso
-            </button>
-        </div>
-
-        <div class="collapse show" id="recurso${recursoId}">
-            <div class="mb-3">
-                <label class="form-label">Descripción del Recurso</label>
-                <input type="text" class="form-control" name="recurso_descripciones[${moduloId}][]" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Tipo de Recurso</label>
-                <select class="form-select" name="recurso_tipos[${moduloId}][]" onchange="toggleRecursoFields(this)" required>
-                    <option value="url">URL</option>
-                    <option value="archivo">Archivo</option>
-                </select>
-            </div>
-            <div class="mb-3 recurso-url">
-                <label class="form-label">URL del Recurso</label>
-                <input type="url" class="form-control" name="recurso_urls[${moduloId}][]">
-            </div>
-            <div class="mb-3 recurso-archivo" style="display: none;">
-                <label class="form-label">Archivo del Recurso</label>
-                <input type="file" class="form-control" name="recurso_archivos[${moduloId}][]">
-            </div>
-        </div>
-    `;
-
-        recursosContainer.appendChild(recursoItem);
-    }
-
-    function toggleRecursoFields(select) {
-        const recursoItem = select.closest('.recurso-item');
-        const urlField = recursoItem.querySelector('.recurso-url');
-        const archivoField = recursoItem.querySelector('.recurso-archivo');
-
-        if (select.value === 'url') {
-            urlField.style.display = 'block';
-            archivoField.style.display = 'none';
-        } else {
-            urlField.style.display = 'none';
-            archivoField.style.display = 'block';
-        }
-    }
-
-
     function eliminarModulo(btn) {
-        if (confirm('¿Estás seguro de que quieres eliminar este módulo y todos sus recursos?')) {
+        if (confirm('¿Estás seguro de que quieres eliminar este módulo?')) {
             btn.closest('.modulo-item').remove();
         }
     }
 
-    function eliminarRecurso(btn) {
-        if (confirm('¿Estás seguro de que quieres eliminar este recurso?')) {
-            btn.closest('.recurso-item').remove();
-        }
-    }
-
-
-    // Inicializar todos los collapse y campos de recursos
+    // Inicializar todos los collapse
     document.addEventListener('DOMContentLoaded', function() {
         var collapseElements = document.querySelectorAll('.collapse');
         collapseElements.forEach(function(el) {
             new bootstrap.Collapse(el, {
                 toggle: false
             });
-        });
-
-        // Inicializar los campos de recursos existentes
-        document.querySelectorAll('select[name^="recurso_tipos"]').forEach(function(select) {
-            toggleRecursoFields(select);
         });
     });
 </script>
