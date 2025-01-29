@@ -18,7 +18,7 @@
         <div class="row">
             <?php
             // Consulta para obtener los 3 cursos más recientes
-            $sql = "SELECT titulo, descripcion, imagen_path, programa_pdf_path, cantidad_horas 
+            $sql = "SELECT titulo, descripcion, imagen_path, programa_pdf_path, cantidad_horas, form_insc 
                 FROM cursos 
                 ORDER BY created_at DESC ";
             $result = $db->query($sql);
@@ -41,8 +41,13 @@
                                 <p class="description"><?php echo $curso['descripcion']; ?></p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <button class="btn btn-success ver-programa-btn">
-                                        <a href="<?php echo $curso['programa_pdf_path']; ?>" target="_blank">Ver Programa</a>
+                                        <a href="<?php echo $curso['programa_pdf_path']; ?>" target="_blank" class="text-white">Ver Programa</a>
                                     </button>
+                                    <?php if (!empty($curso['form_insc'])): ?>
+                                        <button class="btn btn-primary inscripcion-btn">
+                                            <a href="<?php echo $curso['form_insc']; ?>" target="_blank" class="text-white">Inscripción</a>
+                                        </button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>

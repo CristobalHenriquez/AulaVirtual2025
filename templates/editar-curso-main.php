@@ -207,7 +207,7 @@ $modulos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                             </h5>
                                             <div>
                                                 <a href="editar-recursos.php?modulo_id=<?php echo $modulo['id']; ?>" class="btn btn-primary btn-sm me-2">
-                                                    <i class="bi bi-pencil-square"></i> Editar Recursos
+                                                    <i class="bi bi-pencil-square"></i> Recursos
                                                 </a>
                                                 <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarModulo(this)">
                                                     <i class="bi bi-trash"></i> Eliminar Módulo
