@@ -140,7 +140,23 @@ $cursos = $result->fetch_all(MYSQLI_ASSOC);
                             cancelButtonText: 'Cancelar'
                         }).then((secondResult) => {
                             if (secondResult.isConfirmed) {
-                                window.location.href = `controladores/eliminar_curso.php?id=${id}`;
+                                // Crear un formulario dinámicamente
+                                const form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = 'controladores/eliminar_curso.php';
+                                
+                                // Crear un input oculto para el ID del curso
+                                const input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = 'curso_id';
+                                input.value = id;
+                                
+                                // Añadir el input al formulario
+                                form.appendChild(input);
+                                
+                                // Añadir el formulario al body y enviarlo
+                                document.body.appendChild(form);
+                                form.submit();
                             }
                         });
                     }
