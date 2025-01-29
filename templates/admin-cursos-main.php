@@ -12,7 +12,7 @@ $cursos = $result->fetch_all(MYSQLI_ASSOC);
             <div class="row d-flex justify-content-center text-center">
                 <div class="col-lg-8">
                     <h1>Panel administrador de Cursos</h1>
-                    <p class="mb-0">Gestiona los cursos desde aquí, modificando sus datos o eliminándolos</p>
+                    <p class="mb-0">Gestiona los cursos desde aquí, agregando módulos, modificando sus datos o eliminándolos</p>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@ $cursos = $result->fetch_all(MYSQLI_ASSOC);
                                 <td><?php echo htmlspecialchars($curso['titulo']); ?></td>
                                 <td><?php echo nl2br(htmlspecialchars($curso['descripcion'])); ?></td>
                                 <td>
-                                    <a href="editar_curso.php?id=<?php echo $curso['id']; ?>" class="btn btn-warning btn-sm mb-2">
+                                    <a href="editar-curso.php?id=<?php echo $curso['id']; ?>" class="btn btn-warning btn-sm mb-2">
                                         <i class="bi bi-pencil-fill"></i> Editar
                                     </a>
                                     <button class="btn btn-danger btn-sm eliminar-curso"
