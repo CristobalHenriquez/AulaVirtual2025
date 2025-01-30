@@ -161,7 +161,7 @@ $modulos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 id="form_insc"
                                 name="form_insc"
                                 value="<?php echo htmlspecialchars($curso['form_insc']); ?>"
-                                required>
+                                >
                         </div>
 
                         <div class="mb-4">

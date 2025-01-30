@@ -3,10 +3,10 @@
         <h3 class="sitename">E-Learning</h3>
         <p>Alto Buró, Puerto Norte Junín 191, S2000 Rosario, Santa Fe</p>
         <div class="social-links d-flex justify-content-center">
-            <a href="#"><i class="bi bi-twitter-x"></i></a>
-            <a href="#"><i class="bi bi-facebook"></i></a>
-            <a href="#"><i class="bi bi-instagram"></i></a>
-            <a href="#"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.facebook.com/ramcc.net/" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/ramcc_ar/?hl=es" target="_blank"><i class="bi bi-instagram"></i></a>
+            <a href="https://ar.linkedin.com/company/ramcc-ar" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.ramcc.net/" target="_blank"><i class="bi bi-globe"></i></a>
         </div>
         <div class="container">
             <div class="copyright">
