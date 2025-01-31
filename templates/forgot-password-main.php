@@ -1,22 +1,23 @@
-<div class="page-title" id="contacto" data-aos="fade">
+<div class="page-title" data-aos="fade">
     <div class="heading">
         <div class="container">
             <div class="row d-flex justify-content-center text-center">
                 <div class="col-lg-8">
-                    <h1>Iniciar Sesión</h1>
+                    <h1>Recuperar Contraseña</h1>
+                    <p class="mb-0">Ingresa tu correo electrónico para recibir las instrucciones</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<section class="login-section my-5">
+<section class="forgot-password-section my-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-                        <form id="loginForm">
+                        <form id="forgotPasswordForm">
                             <div class="mb-4">
                                 <label for="email" class="form-label">Correo Electrónico</label>
                                 <input type="email"
@@ -24,28 +25,14 @@
                                     id="email"
                                     name="email"
                                     required
-                                    placeholder="Ingresa tu Email">
-                            </div>
-                            <div class="mb-4">
-                                <label for="password" class="form-label">Contraseña</label>
-                                <input type="password"
-                                    class="form-control"
-                                    id="password"
-                                    name="password"
-                                    required
-                                    placeholder="Ingresa tu contraseña">
-                                <div class="text-end mt-2">
-                                    <a href="forgot_password.php" class="text-decoration-none">
-                                        <small>¿Olvidaste tu contraseña?</small>
-                                    </a>
-                                </div>
+                                    placeholder="Ingresa tu correo electrónico">
                             </div>
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
+                                    <i class="bi bi-envelope me-2"></i>Enviar instrucciones
                                 </button>
-                                <a href="Inicio" class="btn btn-secondary">
-                                    <i class="bi bi-arrow-left me-2"></i>Cancelar
+                                <a href="InicioDeSesion" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>Volver
                                 </a>
                             </div>
                         </form>
@@ -57,12 +44,12 @@
 </section>
 
 <script>
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const formData = new FormData(this);
     
-    fetch('procesar_login.php', {
+    fetch('procesar_forgot_password.php', {
         method: 'POST',
         body: formData
     })
@@ -71,12 +58,11 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         if (data.success) {
             Swal.fire({
                 icon: 'success',
-                title: '¡Bienvenido!',
-                text: 'Iniciando sesión...',
-                timer: 1500,
-                showConfirmButton: false
+                title: '¡Correo enviado!',
+                text: 'Por favor, revisa tu bandeja de entrada para continuar',
+                confirmButtonText: 'Aceptar'
             }).then(() => {
-                window.location.href = data.redirect;
+                window.location.href = 'InicioDeSesion';
             });
         } else {
             Swal.fire({

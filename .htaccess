@@ -16,3 +16,8 @@ RewriteRule ^InicioDeSesion$ login.php [L]
 RewriteRule ^Inicio$ index.php [L]
 RewriteRule ^Alumno$ student.php [L]
 
+# Las reglas existentes se mantienen...
+
+# Agregar la regla para RestablecerPassword
+RewriteRule ^RestablecerPassword$ reset_password.php [L]
+RewriteRule ^RestablecerPassword/(.*)$ reset_password.php?token=$1 [L,QSA]
