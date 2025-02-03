@@ -67,7 +67,7 @@ function sendResetEmail($email, $token)
         $baseUrl = getBaseUrl();
 
         // Construir el enlace de restablecimiento
-        $resetLink = $baseUrl . "/RestablecerPassword?token=" . $token;
+        $resetLink = $baseUrl . "/CambiarContraseña?token=" . $token;
 
         // Para debug (opcional)
         error_log("Reset Link generado: " . $resetLink);

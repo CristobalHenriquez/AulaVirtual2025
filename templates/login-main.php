@@ -35,7 +35,7 @@
                                     required
                                     placeholder="Ingresa tu contraseña">
                                 <div class="text-end mt-2">
-                                    <a href="forgot_password.php" class="text-decoration-none">
+                                    <a href="RecuperarContraseña" class="text-decoration-none">
                                         <small>¿Olvidaste tu contraseña?</small>
                                     </a>
                                 </div>
