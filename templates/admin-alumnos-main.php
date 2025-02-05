@@ -284,5 +284,12 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 });
             });
         });
+        
+        document.getElementById('editarUsuarioForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+    
+        // Enviar el formulario directamente
+        this.submit();
+        });
     });
 </script>
