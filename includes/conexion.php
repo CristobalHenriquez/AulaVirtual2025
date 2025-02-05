@@ -8,7 +8,7 @@ if ($_SERVER['HTTP_HOST'] === 'localhost') { // O comprueba alguna otra variable
     $server = 'localhost:3307';
     $username = 'root';
     $password = '';
-    $database = 'aula_php';
+    $database = 'aula_nueva';
 } else {
     $server = '127.0.0.1';
     $username = 'u957245339_ramcc';

@@ -15,3 +15,16 @@
         </div>
     </div>
 </footer>
+
+<!-- WhatsApp Button -->
+<a href="https://wa.me/5493416181694" 
+   class="whatsapp-float d-flex align-items-center justify-content-center" 
+   target="_blank"
+   rel="noopener noreferrer">
+    <i class="bi bi-whatsapp"></i>
+</a>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+</a>
