@@ -170,9 +170,8 @@ $modulos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 class="form-control"
                                 id="cantidad_horas"
                                 name="cantidad_horas"
-                                min="1"
                                 value="<?php echo htmlspecialchars($curso['cantidad_horas']); ?>"
-                                required>
+                                >
                         </div>
 
                         <div class="mb-4">
