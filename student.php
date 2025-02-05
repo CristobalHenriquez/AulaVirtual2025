@@ -107,7 +107,7 @@ function obtenerIconoRecurso($tipo)
     //INCLUYO HEADER
     include_once 'includes/header.php';
     ?>
-    <main class="pb-5" style="background-image: url('assets/img/student-bg.jpg'); background-size: cover">
+    <main class="pb-5" style="background-image: url('assets/img/aula2.jpg'); background-size: cover">
         <?php
         include_once 'templates/student-main.php';
         ?>
