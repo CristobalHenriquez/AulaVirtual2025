@@ -43,20 +43,24 @@ function sendResetEmail($email, $token)
             $mail->SMTPAuth   = false;
             $mail->Port       = 1025;
         } else {
-            // Configuración para producción
+            // Configuración para producción con Zoho Mail
             $mail->isSMTP();
-            $mail->Host       = 'smtp.hostinger.com';
+            $mail->Host       = 'smtp.zoho.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = $_ENV['SMTP_USERNAME'] ?? '';
-            $mail->Password   = $_ENV['SMTP_PASSWORD'] ?? '';
+            $mail->Username   = 'desarrollo@ramcc.net'; // Tu correo en Zoho
+            $mail->Password   = 'Ramcc2023@';  // Tu contraseña real de Zoho
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port       = 465;
+            $mail->Port       = 465; // Puerto seguro SSL en Zoho
+
+            // Alternativa con TLS (si SSL falla)
+            // $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            // $mail->Port       = 587;
         }
 
         // Configuración común
-        $mail->SMTPDebug  = 0;
+        $mail->SMTPDebug  = 0; // Cambiar a 2 para ver logs detallados
         $mail->CharSet    = 'UTF-8';
-        $mail->setFrom('noreply@aulavirtual.com', 'E-Learning RAMCC');
+        $mail->setFrom('desarrollo@ramcc.net', 'E-Learning RAMCC');
         $mail->addAddress($email);
 
         // Contenido del correo
