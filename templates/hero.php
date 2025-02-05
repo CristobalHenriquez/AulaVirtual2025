@@ -1,6 +1,6 @@
 <section id="hero" class="hero section dark-background">
 
-    <img src="assets/img/aula2.jpg" alt="" data-aos="fade-in">
+    <img src="assets/img/Home1.jpg" alt="" data-aos="fade-in">
 
     <div class="container">
         <h2 data-aos="fade-up" data-aos-delay="100">Bienvenido a<br>nuestra Aula Virtual</h2>

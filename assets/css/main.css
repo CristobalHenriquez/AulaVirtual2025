@@ -1604,9 +1604,7 @@ section,
 /*--------------------------------------------------------------
 # Starter Section Section
 --------------------------------------------------------------*/
-.starter-section {
-  /* Add your styles here */
-}
+/* Removed empty ruleset for .starter-section */
 
 /* STUDENT */
 .student-panel {
