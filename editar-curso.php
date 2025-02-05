@@ -24,6 +24,36 @@ include_once 'includes/head.php';
     include_once 'includes/scripts.php';
     ?>
 
-</body>
+    <!-- Agregar script de SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Script para manejar las notificaciones -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        <?php
+        if (isset($_SESSION['swal_success'])) {
+            echo "Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: '" . addslashes($_SESSION['swal_success']) . "',
+                showConfirmButton: false,
+                timer: 1500
+            });";
+            unset($_SESSION['swal_success']);
+        }
+
+        if (isset($_SESSION['swal_error'])) {
+            echo "Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '" . addslashes($_SESSION['swal_error']) . "',
+                showConfirmButton: true
+            });";
+            unset($_SESSION['swal_error']);
+        }
+        ?>
+    });
+    </script>
+
+</body>
 </html>

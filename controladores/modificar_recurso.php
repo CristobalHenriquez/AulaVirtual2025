@@ -8,6 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $modulo_id = $_POST['modulo_id'];
 
+        // Get the curso_id for redirection
+        $stmt = $db->prepare("SELECT curso_id FROM modulos WHERE id = ?");
+        $stmt->bind_param("i", $modulo_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $curso_id = $result->fetch_assoc()['curso_id'];
+
         // Procesar recursos existentes
         if (isset($_POST['recurso_ids'])) {
             foreach ($_POST['recurso_ids'] as $i => $recurso_id) {
@@ -88,14 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $db->commit();
-        $_SESSION['mensaje'] = "Recursos actualizados correctamente";
-        $_SESSION['tipo_mensaje'] = "success";
+        $_SESSION['swal_success'] = "Recursos actualizados correctamente";
     } catch (Exception $e) {
         $db->rollback();
-        $_SESSION['mensaje'] = "Error al actualizar los recursos: " . $e->getMessage();
-        $_SESSION['tipo_mensaje'] = "danger";
+        $_SESSION['swal_error'] = "Error al actualizar los recursos: " . $e->getMessage();
     }
 
-    header('Location: ../editar-recursos.php?modulo_id=' . $modulo_id);
+    // Redirect to editar-curso.php with the corresponding curso_id
+    header("Location: ../editar-curso.php?id=" . $curso_id);
     exit;
 }

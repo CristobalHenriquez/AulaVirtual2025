@@ -52,8 +52,7 @@
                                 class="form-control"
                                 id="imagen"
                                 name="imagen"
-                                accept="image/*"
-                                required>
+                                accept="image/*">
                             <div class="form-text">Seleccione una imagen representativa para el curso</div>
                         </div>
 
@@ -63,8 +62,7 @@
                                 class="form-control"
                                 id="programa"
                                 name="programa"
-                                accept=".pdf"
-                                required>
+                                accept=".pdf">
                             <div class="form-text">Seleccione el programa del curso en formato PDF</div>
                         </div>
 
@@ -74,8 +72,7 @@
                                 class="form-control"
                                 id="form_insc"
                                 name="form_insc"
-                                placeholder="https://ejemplo.com/formulario"
-                                required>
+                                placeholder="https://ejemplo.com/formulario">
                         </div>
 
                         <div class="mb-4">
