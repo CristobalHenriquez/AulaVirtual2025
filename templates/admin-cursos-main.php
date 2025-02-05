@@ -69,6 +69,9 @@ $cursos = $result->fetch_all(MYSQLI_ASSOC);
             </div>
         </div>
     </div>
+    <div class="text-center mt-4">
+        <a href="logout.php" class="btn btn-danger btn-lg">Cerrar Sesión</a>
+    </div>
 </div>
 
 <style>
@@ -144,16 +147,16 @@ $cursos = $result->fetch_all(MYSQLI_ASSOC);
                                 const form = document.createElement('form');
                                 form.method = 'POST';
                                 form.action = 'controladores/eliminar_curso.php';
-                                
+
                                 // Crear un input oculto para el ID del curso
                                 const input = document.createElement('input');
                                 input.type = 'hidden';
                                 input.name = 'curso_id';
                                 input.value = id;
-                                
+
                                 // Añadir el input al formulario
                                 form.appendChild(input);
-                                
+
                                 // Añadir el formulario al body y enviarlo
                                 document.body.appendChild(form);
                                 form.submit();

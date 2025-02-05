@@ -31,6 +31,9 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="text-center mt-4">
+                            <a href="logout.php" class="btn btn-danger btn-lg">Cerrar Sesión</a>
+                        </div>
                     </div>
                 </div>
             </div>
