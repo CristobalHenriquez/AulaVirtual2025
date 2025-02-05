@@ -44,13 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Confirmar transacción
         $db->commit();
 
-        $_SESSION['mensaje'] = "Usuario actualizado correctamente.";
-        $_SESSION['tipo_mensaje'] = "success";
+        $_SESSION['swal_success'] = "Cambios de alumno se actualizaron correctamente.";
     } catch (Exception $e) {
         // Revertir transacción en caso de error
         $db->rollback();
-        $_SESSION['mensaje'] = "Error al actualizar el usuario: " . $e->getMessage();
-        $_SESSION['tipo_mensaje'] = "danger";
+        $_SESSION['swal_error'] = "Error al actualizar el usuario: " . $e->getMessage();
     }
 
     // Redireccionar de vuelta a la página de administración

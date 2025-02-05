@@ -165,12 +165,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $db->commit();
-        $_SESSION['mensaje'] = "Curso actualizado correctamente";
-        $_SESSION['tipo_mensaje'] = "success";
+        $db->commit();
+        $_SESSION['swal_success'] = "Curso actualizado correctamente";
     } catch (Exception $e) {
         $db->rollback();
-        $_SESSION['mensaje'] = "Error al actualizar el curso: " . $e->getMessage();
-        $_SESSION['tipo_mensaje'] = "danger";
+        $_SESSION['swal_error'] = "Error al actualizar el curso: " . $e->getMessage();
 
         // Limpiar archivos subidos en caso de error
         if (isset($ruta_imagen) && file_exists($ruta_imagen)) {

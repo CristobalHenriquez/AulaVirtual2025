@@ -49,16 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Confirmar transacción
         $db->commit();
 
-        $_SESSION['mensaje'] = "Usuario agregado correctamente.";
-        $_SESSION['tipo_mensaje'] = "success";
+        $_SESSION['swal_success'] = "Alumno agregado exitosamente.";
     } catch (Exception $e) {
         // Revertir transacción en caso de error
         $db->rollback();
-        $_SESSION['mensaje'] = "Error al agregar el usuario: " . $e->getMessage();
-        $_SESSION['tipo_mensaje'] = "danger";
+        $_SESSION['swal_error'] = "Error al agregar el alumno: " . $e->getMessage();
     }
 
-    // Redireccionar de vuelta a la página de administración
+    // Redireccionar de vuelta a la página de administración de alumnos
     header('Location: ../admin-alumnos.php');
     exit;
 }

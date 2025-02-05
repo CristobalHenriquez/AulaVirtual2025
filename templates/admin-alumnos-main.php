@@ -96,6 +96,9 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
         </div>
     </div>
+    <div class="text-center mt-4">
+        <a href="logout.php" class="btn btn-danger btn-lg">Cerrar Sesión</a>
+    </div>
 </div>
 
 <!-- Modal Editar Usuario -->
@@ -283,6 +286,13 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     }
                 });
             });
+        });
+
+        document.getElementById('editarUsuarioForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Enviar el formulario directamente
+            this.submit();
         });
     });
 </script>
