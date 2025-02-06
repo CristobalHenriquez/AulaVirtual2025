@@ -16,10 +16,10 @@ $result = $stmt->get_result();
 $usuario = $result->fetch_assoc();
 
 // Obtener cursos inscritos agrupados por año
-$sql = "SELECT c.*, DATE_FORMAT(c.created_at, '%Y') as anio
+$sql = "SELECT c.*, c.anio as anio
         FROM cursos c
         INNER JOIN inscripciones i ON c.id = i.curso_id
-        WHERE i.usuario_id = ?
+        WHERE i.usuario_id = ? AND c.id != 26
         ORDER BY c.anio DESC, c.created_at DESC";
 
 $stmt = $db->prepare($sql);
@@ -31,6 +31,45 @@ $result = $stmt->get_result();
 $cursos_por_anio = [];
 while ($curso = $result->fetch_assoc()) {
     $cursos_por_anio[$curso['anio']][] = $curso;
+}
+
+// Check if the student is enrolled in course 26
+$stmt = $db->prepare("SELECT 1 FROM inscripciones WHERE usuario_id = ? AND curso_id = 26 LIMIT 1");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$is_enrolled_in_course_26 = $stmt->get_result()->num_rows > 0;
+
+// Fetch course 26 data if enrolled
+$course_26_data = null;
+if ($is_enrolled_in_course_26) {
+    $stmt = $db->prepare("SELECT * FROM cursos WHERE id = 26");
+    $stmt->execute();
+    $course_26_data = $stmt->get_result()->fetch_assoc();
+}
+
+// Fetch resources for course 26
+function obtenerRecursosCurso26($db) {
+    $stmt = $db->prepare("
+        SELECT rm.* 
+        FROM recursos_modulo rm
+        JOIN modulos m ON rm.modulo_id = m.id
+        WHERE m.curso_id = 26
+    ");
+    $stmt->execute();
+    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+// Custom function to get icon for course 26 resources
+function obtenerIconoRecursoCurso26($recurso_id) {
+    $iconos = [
+        56 => 'bi bi-tree',
+        57 => 'bi bi-trash',
+        58 => 'bi bi-bicycle',
+        59 => 'bi bi-book',
+        60 => 'bi bi-building',
+        61 => 'bi bi-images'
+    ];
+    return $iconos[$recurso_id] ?? 'bi bi-file-earmark';
 }
 
 // Función para obtener módulos de un curso
