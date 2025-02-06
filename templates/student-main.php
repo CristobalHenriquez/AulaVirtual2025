@@ -18,6 +18,84 @@
         <p class="mb-2"><strong>Email:</strong> <?php echo htmlspecialchars($usuario['email']); ?></p>
         <p><strong>Municipio/Institución:</strong> <?php echo htmlspecialchars($usuario['municipio']); ?></p>
     </div>
+    <?php if ($is_enrolled_in_course_26 && $course_26_data): ?>
+        <div class="card mb-4">
+            <div class="card-header text-white">
+                <h3 class="mb-0 fw-bold"><?php echo htmlspecialchars($course_26_data['titulo']); ?></h3>
+            </div>
+            <div class="card-body">
+                <p class="lead mb-4"><?php echo nl2br(htmlspecialchars($course_26_data['descripcion'])); ?></p>
+
+                <h4 class="mb-3">Recursos:</h4>
+                <div class="recursos-grid">
+                    <?php
+                    $recursos = obtenerRecursosCurso26($db);
+                    foreach ($recursos as $recurso):
+                        $icono = obtenerIconoRecursoCurso26($recurso['id']);
+                        $enlace = $recurso['url'] ?: $recurso['archivo_path'];
+                    ?>
+                        <a href="<?php echo htmlspecialchars($enlace); ?>"
+                            target="_blank"
+                            class="recurso-btn">
+                            <i class="<?php echo $icono; ?> me-2"></i>
+                            <span><?php echo htmlspecialchars($recurso['descripcion']); ?></span>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .bg-accent {
+                background-color: var(--accent-color);
+            }
+
+            .recursos-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .recurso-btn {
+                display: flex;
+                align-items: center;
+                padding: 1rem;
+                background-color: var(--accent-color);
+                color: white;
+                text-decoration: none;
+                border-radius: 0.5rem;
+                transition: all 0.3s ease;
+                height: 100%;
+                min-height: 60px;
+                font-size: 1rem;
+                border: 2px solid transparent;
+            }
+
+            .recurso-btn:hover {
+                background-color: white;
+                color: var(--accent-color);
+                border-color: var(--accent-color);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px rgba(53, 83, 106, 0.2);
+            }
+
+            .recurso-btn i {
+                font-size: 1.5rem;
+                min-width: 2rem;
+            }
+
+            .recurso-btn span {
+                flex: 1;
+            }
+
+            @media (max-width: 768px) {
+                .recursos-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    <?php endif; ?>
 
     <h2 class="mb-4">Cursos Inscritos:</h2>
 

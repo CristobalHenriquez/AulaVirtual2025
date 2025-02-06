@@ -17,10 +17,11 @@
     <div class="container">
         <div class="row">
             <?php
-            // Consulta para obtener los 3 cursos más recientes
+            // Consulta modificada para excluir el curso con ID 26
             $sql = "SELECT titulo, descripcion, imagen_path, programa_pdf_path, cantidad_horas, form_insc 
                 FROM cursos 
-                ORDER BY created_at DESC ";
+                WHERE id != 26
+                ORDER BY created_at DESC";
             $result = $db->query($sql);
 
             // Verificar si hay resultados
