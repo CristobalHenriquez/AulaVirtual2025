@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $rol = $_POST['rol'];
+    $ramcc = isset($_POST['ramcc']) ? 1 : 0;
     $cursos = isset($_POST['cursos']) ? $_POST['cursos'] : [];
 
     try {
@@ -26,10 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Insertar el nuevo usuario
         $stmt = $db->prepare("
-            INSERT INTO usuarios (nombre, apellidos, dni, municipio, email, password, rol, estado)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'activo')
+            INSERT INTO usuarios (nombre, apellidos, dni, municipio, email, password, rol, estado, ramcc)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'activo', ?)
         ");
-        $stmt->bind_param("sssssss", $nombre, $apellidos, $dni, $municipio, $email, $password, $rol);
+        $stmt->bind_param("sssssssi", $nombre, $apellidos, $dni, $municipio, $email, $password, $rol, $ramcc);
         $stmt->execute();
         
         $usuario_id = $db->insert_id;

@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'];
     $apellidos = $_POST['apellidos'];
     $email = $_POST['email'];
+    $ramcc = isset($_POST['ramcc']) ? 1 : 0;
     $cursos = isset($_POST['cursos']) ? $_POST['cursos'] : [];
 
     try {
@@ -18,10 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             UPDATE usuarios 
             SET nombre = ?, 
                 apellidos = ?, 
-                email = ?
+                email = ?,
+                ramcc = ?
             WHERE id = ?
         ");
-        $stmt->bind_param("sssi", $nombre, $apellidos, $email, $id);
+        $stmt->bind_param("sssii", $nombre, $apellidos, $email, $ramcc, $id);
         $stmt->execute();
 
         // Eliminar inscripciones existentes

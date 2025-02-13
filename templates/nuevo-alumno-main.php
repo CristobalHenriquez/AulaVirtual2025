@@ -45,14 +45,14 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
                         <div class="mb-3">
                             <label for="dni" class="form-label">DNI</label>
-                            <input type="text" class="form-control" id="dni" name="dni" 
-                                   placeholder="No es obligatorio este campo">
+                            <input type="text" class="form-control" id="dni" name="dni"
+                                placeholder="No es obligatorio este campo">
                         </div>
 
                         <div class="mb-3">
                             <label for="municipio" class="form-label">Municipio/Institución</label>
-                            <input type="text" class="form-control" id="municipio" name="municipio" 
-                            placeholder="No es obligatorio este campo">
+                            <input type="text" class="form-control" id="municipio" name="municipio"
+                                placeholder="No es obligatorio este campo">
                         </div>
 
                         <div class="mb-3">
@@ -63,6 +63,15 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <div class="mb-3">
                             <label for="password" class="form-label">Contraseña</label>
                             <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ramcc" name="ramcc" value="1">
+                                <label class="form-check-label" for="ramcc">
+                                    ¿Pertenece a la RAMCC?
+                                </label>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -115,13 +124,13 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Manejar el checkbox de seleccionar/deseleccionar todos
-    document.getElementById('selectAllCursos').addEventListener('change', function() {
-        const isChecked = this.checked;
-        document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
-            checkbox.checked = isChecked;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manejar el checkbox de seleccionar/deseleccionar todos
+        document.getElementById('selectAllCursos').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
         });
     });
-});
 </script>

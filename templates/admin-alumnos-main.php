@@ -3,7 +3,8 @@
 $stmt = $db->prepare("
     SELECT u.*, 
            GROUP_CONCAT(DISTINCT c.titulo SEPARATOR '||') as cursos_inscritos,
-           GROUP_CONCAT(DISTINCT i.curso_id) as curso_ids
+           GROUP_CONCAT(DISTINCT i.curso_id) as curso_ids,
+           u.ramcc
     FROM usuarios u
     LEFT JOIN inscripciones i ON u.id = i.usuario_id
     LEFT JOIN cursos c ON i.curso_id = c.id
@@ -81,7 +82,8 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                         data-nombre="<?php echo htmlspecialchars($alumno['nombre']); ?>"
                                         data-apellidos="<?php echo htmlspecialchars($alumno['apellidos']); ?>"
                                         data-email="<?php echo htmlspecialchars($alumno['email']); ?>"
-                                        data-cursos="<?php echo htmlspecialchars($alumno['curso_ids']); ?>">
+                                        data-cursos="<?php echo htmlspecialchars($alumno['curso_ids']); ?>"
+                                        data-ramcc="<?php echo htmlspecialchars($alumno['ramcc']); ?>">
                                         <i class="bi bi-pencil-fill"></i>
                                     </button>
                                     <button class="btn btn-danger btn-circle btn-sm eliminar-alumno"
@@ -123,6 +125,14 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="ramcc" name="ramcc" value="1">
+                            <label class="form-check-label" for="ramcc">
+                                RAMCC
+                            </label>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Cursos</label>
@@ -219,6 +229,7 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 const nombre = this.dataset.nombre;
                 const apellidos = this.dataset.apellidos;
                 const email = this.dataset.email;
+                const ramcc = this.dataset.ramcc === '1';
                 const cursoIds = this.dataset.cursos ? this.dataset.cursos.split(',') : [];
 
                 // Limpiar checkboxes anteriores
@@ -231,6 +242,7 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 document.getElementById('nombre').value = nombre;
                 document.getElementById('apellidos').value = apellidos;
                 document.getElementById('email').value = email;
+                document.getElementById('ramcc').checked = ramcc;
 
                 // Marcar los checkboxes de los cursos del alumno
                 cursoIds.forEach(cursoId => {
