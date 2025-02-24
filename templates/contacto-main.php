@@ -86,32 +86,32 @@
 </section>
 
 <style>
-.contact-form .loading {
-    background: #ffd700;
-    text-align: center;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
+    .contact-form .loading {
+        background: #ffd700;
+        text-align: center;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
 
-.contact-form .error-message {
-    display: none;
-    color: #fff;
-    background: #ed3c0d;
-    text-align: center;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
+    .contact-form .error-message {
+        display: none;
+        color: #fff;
+        background: #ed3c0d;
+        text-align: center;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
 
-.contact-form .sent-message {
-    color: #fff;
-    background: #18d26e;
-    text-align: center;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
+    .contact-form .sent-message {
+        color: #fff;
+        background: #18d26e;
+        text-align: center;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
 </style>
 
 <script>
