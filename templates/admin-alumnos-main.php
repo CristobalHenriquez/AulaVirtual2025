@@ -2,12 +2,16 @@
 // Obtener todos los usuarios con rol de alumno
 $stmt = $db->prepare("
     SELECT u.*, 
+           m.name as nombre_municipio,
+           p.name as nombre_provincia,
            GROUP_CONCAT(DISTINCT c.titulo SEPARATOR '||') as cursos_inscritos,
            GROUP_CONCAT(DISTINCT i.curso_id) as curso_ids,
            u.ramcc
     FROM usuarios u
     LEFT JOIN inscripciones i ON u.id = i.usuario_id
     LEFT JOIN cursos c ON i.curso_id = c.id
+    LEFT JOIN municipios m ON u.id_municipio = m.id
+    LEFT JOIN provincias p ON m.province_id = p.id
     GROUP BY u.id
     ORDER BY u.id ASC
 ");
@@ -19,6 +23,17 @@ $alumnos = $result->fetch_all(MYSQLI_ASSOC);
 $stmt = $db->prepare("SELECT id, titulo FROM cursos ORDER BY created_at DESC");
 $stmt->execute();
 $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Obtener todos los municipios para el select del modal
+$stmt = $db->prepare("
+    SELECT m.id, m.name as nombre_municipio, p.name as nombre_provincia 
+    FROM municipios m
+    LEFT JOIN provincias p ON m.province_id = p.id
+    WHERE m.visible = 1
+    ORDER BY p.name, m.name
+");
+$stmt->execute();
+$municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
 <!-- TITULO -->
 <div class="page-title" data-aos="fade">
@@ -52,9 +67,11 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <table id="tablaAlumnos" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Nombre y apellido</th>
-                            <th>Municipio/Empresa</th>
-                            <th>Email</th>
+                            <th>Nombre</th>
+                            <th>Municipio</th>
+                            <th>Provincia</th>
+                            <th>Institución</th>
+                            <th>Estado</th>
                             <th>Cursos Inscritos</th>
                             <th>Acciones</th>
                         </tr>
@@ -62,9 +79,23 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <tbody>
                         <?php foreach ($alumnos as $alumno): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($alumno['nombre'] . ' ' . $alumno['apellidos']); ?></td>
+                                <td><?php echo htmlspecialchars($alumno['nombre']); ?></td>
+                                <td>
+                                    <?php 
+                                    echo !empty($alumno['nombre_municipio']) ? 
+                                        htmlspecialchars($alumno['nombre_municipio']) : 
+                                        "Sin municipio asociado";
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php 
+                                    echo !empty($alumno['nombre_provincia']) ? 
+                                        htmlspecialchars($alumno['nombre_provincia']) : 
+                                        "-";
+                                    ?>
+                                </td>
                                 <td><?php echo htmlspecialchars($alumno['municipio']); ?></td>
-                                <td><?php echo htmlspecialchars($alumno['email']); ?></td>
+                                <td><?php echo htmlspecialchars($alumno['estado']); ?></td>
                                 <td>
                                     <?php if ($alumno['cursos_inscritos']): ?>
                                         <ul class="mb-0">
@@ -80,8 +111,10 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                     <button class="btn btn-warning btn-circle btn-sm editar-alumno"
                                         data-id="<?php echo $alumno['id']; ?>"
                                         data-nombre="<?php echo htmlspecialchars($alumno['nombre']); ?>"
-                                        data-apellidos="<?php echo htmlspecialchars($alumno['apellidos']); ?>"
                                         data-email="<?php echo htmlspecialchars($alumno['email']); ?>"
+                                        data-municipio="<?php echo htmlspecialchars($alumno['municipio']); ?>"
+                                        data-estado="<?php echo htmlspecialchars($alumno['estado']); ?>"
+                                        data-id-municipio="<?php echo $alumno['id_municipio']; ?>"
                                         data-cursos="<?php echo htmlspecialchars($alumno['curso_ids']); ?>"
                                         data-ramcc="<?php echo htmlspecialchars($alumno['ramcc']); ?>">
                                         <i class="bi bi-pencil-fill"></i>
@@ -119,12 +152,30 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <input type="text" class="form-control" id="nombre" name="nombre" required>
                     </div>
                     <div class="mb-3">
-                        <label for="apellidos" class="form-label">Apellidos</label>
-                        <input type="text" class="form-control" id="apellidos" name="apellidos" required>
-                    </div>
-                    <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_municipio" class="form-label">Municipio</label>
+                        <select class="form-select" id="id_municipio" name="id_municipio">
+                            <option value="">Sin municipio asociado</option>
+                            <?php foreach ($municipios as $municipio): ?>
+                                <option value="<?php echo $municipio['id']; ?>">
+                                    <?php echo htmlspecialchars($municipio['nombre_municipio']); ?> 
+                                    <?php if (!empty($municipio['nombre_provincia'])): ?>
+                                        (<?php echo htmlspecialchars($municipio['nombre_provincia']); ?>)
+                                    <?php endif; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="municipio" class="form-label">Institución/Empresa</label>
+                        <input type="text" class="form-control" id="municipio" name="municipio">
+                    </div>
+                    <div class="mb-3">
+                        <label for="estado" class="form-label">Estado</label>
+                        <input type="text" class="form-control" id="estado" name="estado">
                     </div>
                     <div class="mb-3">
                         <div class="form-check">
@@ -201,7 +252,7 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Inicializar DataTable (sin cambios)
+        // Inicializar DataTable
         new DataTable('#tablaAlumnos', {
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
@@ -222,13 +273,59 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rtip'
         });
 
+        // Función para manejar los checkboxes de cursos
+        function handleCursosCheckboxes(ramccChecked) {
+            const cursosCheckboxes = document.querySelectorAll('.curso-checkbox');
+            const selectAllCheckbox = document.getElementById('selectAllCursos');
+            
+            // Marcar todos los checkboxes si RAMCC está activado
+            cursosCheckboxes.forEach(checkbox => {
+                checkbox.checked = ramccChecked;
+                // No deshabilitamos los checkboxes para que se envíen con el formulario
+                // pero los hacemos readonly visualmente
+                if (ramccChecked) {
+                    checkbox.setAttribute('onclick', 'return false');
+                    checkbox.parentNode.classList.add('text-muted');
+                } else {
+                    checkbox.removeAttribute('onclick');
+                    checkbox.parentNode.classList.remove('text-muted');
+                }
+            });
+            
+            selectAllCheckbox.checked = ramccChecked;
+            if (ramccChecked) {
+                selectAllCheckbox.setAttribute('onclick', 'return false');
+                selectAllCheckbox.parentNode.classList.add('text-muted');
+            } else {
+                selectAllCheckbox.removeAttribute('onclick');
+                selectAllCheckbox.parentNode.classList.remove('text-muted');
+            }
+        }
+
+        // Manejar cambios en el checkbox RAMCC
+        document.getElementById('ramcc').addEventListener('change', function() {
+            handleCursosCheckboxes(this.checked);
+        });
+
+        // Manejar el checkbox de seleccionar/deseleccionar todos
+        document.getElementById('selectAllCursos').addEventListener('change', function() {
+            if (!document.getElementById('ramcc').checked) {
+                const isChecked = this.checked;
+                document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+            }
+        });
+
         // Manejar el clic en el botón de editar
         document.querySelectorAll('.editar-alumno').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.dataset.id;
                 const nombre = this.dataset.nombre;
-                const apellidos = this.dataset.apellidos;
                 const email = this.dataset.email;
+                const municipio = this.dataset.municipio;
+                const estado = this.dataset.estado;
+                const idMunicipio = this.dataset.idMunicipio;
                 const ramcc = this.dataset.ramcc === '1';
                 const cursoIds = this.dataset.cursos ? this.dataset.cursos.split(',') : [];
 
@@ -240,29 +337,28 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 // Establecer valores en el formulario
                 document.getElementById('usuario_id').value = id;
                 document.getElementById('nombre').value = nombre;
-                document.getElementById('apellidos').value = apellidos;
                 document.getElementById('email').value = email;
+                document.getElementById('municipio').value = municipio;
+                document.getElementById('estado').value = estado;
+                document.getElementById('id_municipio').value = idMunicipio;
                 document.getElementById('ramcc').checked = ramcc;
 
-                // Marcar los checkboxes de los cursos del alumno
-                cursoIds.forEach(cursoId => {
-                    const checkbox = document.getElementById(`curso_${cursoId}`);
-                    if (checkbox) {
-                        checkbox.checked = true;
-                    }
-                });
+                // Manejar los checkboxes de cursos según el estado de RAMCC
+                handleCursosCheckboxes(ramcc);
+
+                // Si no es RAMCC, marcar solo los cursos del alumno
+                if (!ramcc) {
+                    cursoIds.forEach(cursoId => {
+                        const checkbox = document.getElementById(`curso_${cursoId}`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
 
                 // Mostrar el modal
                 const modal = new bootstrap.Modal(document.getElementById('editarUsuarioModal'));
                 modal.show();
-            });
-        });
-
-        // Manejar el checkbox de seleccionar/deseleccionar todos
-        document.getElementById('selectAllCursos').addEventListener('change', function() {
-            const isChecked = this.checked;
-            document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
-                checkbox.checked = isChecked;
             });
         });
 

@@ -5,8 +5,10 @@ require_once '../includes/conexion.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
     $nombre = $_POST['nombre'];
-    $apellidos = $_POST['apellidos'];
     $email = $_POST['email'];
+    $id_municipio = !empty($_POST['id_municipio']) ? $_POST['id_municipio'] : null;
+    $municipio = isset($_POST['municipio']) ? $_POST['municipio'] : null;
+    $estado = isset($_POST['estado']) ? $_POST['estado'] : null;
     $ramcc = isset($_POST['ramcc']) ? 1 : 0;
     $cursos = isset($_POST['cursos']) ? $_POST['cursos'] : [];
 
@@ -18,18 +20,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $db->prepare("
             UPDATE usuarios 
             SET nombre = ?, 
-                apellidos = ?, 
                 email = ?,
+                id_municipio = ?,
+                municipio = ?,
+                estado = ?,
                 ramcc = ?
             WHERE id = ?
         ");
-        $stmt->bind_param("sssii", $nombre, $apellidos, $email, $ramcc, $id);
+        $stmt->bind_param("ssissii", $nombre, $email, $id_municipio, $municipio, $estado, $ramcc, $id);
         $stmt->execute();
 
         // Eliminar inscripciones existentes
         $stmt = $db->prepare("DELETE FROM inscripciones WHERE usuario_id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
+
+        // Si es RAMCC, inscribir en todos los cursos disponibles
+        if ($ramcc) {
+            // Obtener todos los cursos
+            $stmt = $db->prepare("SELECT id FROM cursos");
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $todos_cursos = [];
+            while ($row = $result->fetch_assoc()) {
+                $todos_cursos[] = $row['id'];
+            }
+            
+            // Usar todos los cursos en lugar de los seleccionados
+            $cursos = $todos_cursos;
+        }
 
         // Insertar nuevas inscripciones
         if (!empty($cursos)) {

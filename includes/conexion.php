@@ -11,13 +11,13 @@ if ($isLocal) {
     $server = 'localhost:3307'; // Puerto de MySQL en XAMPP/MAMP (ajústalo si es necesario)
     $username = 'root';
     $password = '';
-    $database = 'aula_25';
+    $database = 'ramcc_aula';
 } else {
     // Configuración para el servidor en producción
     $server = 'localhost'; // En la mayoría de los hostings compartidos se usa 'localhost'
-    $username = 'u692790713_aula'; // Usuario de la base de datos (mismo que Moodle)
-    $password = 'U5e9uwo1h='; // Contraseña de la BD
-    $database = 'u692790713_aula'; // Nombre de la BD (mismo que Moodle)
+    $username = 'u692790713_admin'; // Usuario de la base de datos (mismo que Moodle)
+    $password = '/P7c@Mv$y9'; // Contraseña de la BD
+    $database = 'u692790713_ramcc'; // Nombre de la BD (mismo que Moodle)
 }
 
 // Conectar usando **MySQLi**
