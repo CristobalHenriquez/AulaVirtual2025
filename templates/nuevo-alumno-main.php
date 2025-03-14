@@ -3,6 +3,17 @@
 $stmt = $db->prepare("SELECT id, titulo FROM cursos ORDER BY created_at DESC");
 $stmt->execute();
 $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Obtener todos los municipios para el select del formulario
+$stmt = $db->prepare("
+    SELECT m.id, m.name as nombre_municipio, p.name as nombre_provincia 
+    FROM municipios m
+    LEFT JOIN provincias p ON m.province_id = p.id
+    WHERE m.visible = 1
+    ORDER BY p.name, m.name
+");
+$stmt->execute();
+$municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
 <!-- TITULO -->
 <div class="page-title" data-aos="fade">
@@ -33,25 +44,43 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
                 <div class="card-body">
                     <form action="controladores/agregar_alumno.php" method="POST">
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required>
-                        </div>
+                        <div class="col-12 row">
+                            <div class="mb-3 col-6">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="apellidos" class="form-label">Apellidos</label>
-                            <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+                            <div class="mb-3 col-6">
+                                <label for="dni" class="form-label">DNI</label>
+                                <input type="number" class="form-control" id="dni" name="dni"
+                                    placeholder="No es obligatorio este campo">
+                            </div>
                         </div>
+                        <div class="col-12 row">
+                            <div class="mb-3 col-6">
+                                <label for="id_municipio" class="form-label">Municipio</label>
+                                <select class="form-select" id="id_municipio" name="id_municipio">
+                                    <option value="">Sin municipio asociado</option>
+                                    <?php foreach ($municipios as $municipio): ?>
+                                        <option value="<?php echo $municipio['id']; ?>">
+                                            <?php echo htmlspecialchars($municipio['nombre_municipio']); ?>
+                                            <?php if (!empty($municipio['nombre_provincia'])): ?>
+                                                (<?php echo htmlspecialchars($municipio['nombre_provincia']); ?>)
+                                            <?php endif; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="dni" class="form-label">DNI</label>
-                            <input type="text" class="form-control" id="dni" name="dni"
-                                placeholder="No es obligatorio este campo">
+                            <div class="mb-3 col-6">
+                                <label for="municipio" class="form-label">Institución/Empresa</label>
+                                <input type="text" class="form-control" id="municipio" name="municipio"
+                                    placeholder="No es obligatorio este campo">
+                            </div>
                         </div>
-
                         <div class="mb-3">
-                            <label for="municipio" class="form-label">Municipio/Institución</label>
-                            <input type="text" class="form-control" id="municipio" name="municipio"
+                            <label for="estado" class="form-label">Estado</label>
+                            <input type="text" class="form-control" id="estado" name="estado"
                                 placeholder="No es obligatorio este campo">
                         </div>
 
@@ -125,12 +154,48 @@ $cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Función para manejar los checkboxes de cursos
+        function handleCursosCheckboxes(ramccChecked) {
+            const cursosCheckboxes = document.querySelectorAll('.curso-checkbox');
+            const selectAllCheckbox = document.getElementById('selectAllCursos');
+
+            // Marcar todos los checkboxes si RAMCC está activado
+            cursosCheckboxes.forEach(checkbox => {
+                checkbox.checked = ramccChecked;
+                // No deshabilitamos los checkboxes para que se envíen con el formulario
+                // pero los hacemos readonly visualmente
+                if (ramccChecked) {
+                    checkbox.setAttribute('onclick', 'return false');
+                    checkbox.parentNode.classList.add('text-muted');
+                } else {
+                    checkbox.removeAttribute('onclick');
+                    checkbox.parentNode.classList.remove('text-muted');
+                }
+            });
+
+            selectAllCheckbox.checked = ramccChecked;
+            if (ramccChecked) {
+                selectAllCheckbox.setAttribute('onclick', 'return false');
+                selectAllCheckbox.parentNode.classList.add('text-muted');
+            } else {
+                selectAllCheckbox.removeAttribute('onclick');
+                selectAllCheckbox.parentNode.classList.remove('text-muted');
+            }
+        }
+
+        // Manejar cambios en el checkbox RAMCC
+        document.getElementById('ramcc').addEventListener('change', function() {
+            handleCursosCheckboxes(this.checked);
+        });
+
         // Manejar el checkbox de seleccionar/deseleccionar todos
         document.getElementById('selectAllCursos').addEventListener('change', function() {
-            const isChecked = this.checked;
-            document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
-                checkbox.checked = isChecked;
-            });
+            if (!document.getElementById('ramcc').checked) {
+                const isChecked = this.checked;
+                document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+            }
         });
     });
 </script>

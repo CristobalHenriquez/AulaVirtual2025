@@ -4,9 +4,10 @@ require_once '../includes/conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'];
-    $apellidos = $_POST['apellidos'];
     $dni = $_POST['dni'] ?: null;
-    $municipio = $_POST['municipio'];
+    $id_municipio = !empty($_POST['id_municipio']) ? $_POST['id_municipio'] : null;
+    $municipio = isset($_POST['municipio']) ? $_POST['municipio'] : null;
+    $estado = isset($_POST['estado']) && !empty($_POST['estado']) ? $_POST['estado'] : null;
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $rol = $_POST['rol'];
@@ -27,13 +28,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Insertar el nuevo usuario
         $stmt = $db->prepare("
-            INSERT INTO usuarios (nombre, apellidos, dni, municipio, email, password, rol, estado, ramcc)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'activo', ?)
+            INSERT INTO usuarios (nombre, dni, id_municipio, municipio, email, password, rol, estado, ramcc)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->bind_param("sssssssi", $nombre, $apellidos, $dni, $municipio, $email, $password, $rol, $ramcc);
+        $stmt->bind_param("ssisssssi", $nombre, $dni, $id_municipio, $municipio, $email, $password, $rol, $estado, $ramcc);
         $stmt->execute();
         
         $usuario_id = $db->insert_id;
+
+        // Si es RAMCC, inscribir en todos los cursos disponibles
+        if ($ramcc) {
+            // Obtener todos los cursos
+            $stmt = $db->prepare("SELECT id FROM cursos");
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $todos_cursos = [];
+            while ($row = $result->fetch_assoc()) {
+                $todos_cursos[] = $row['id'];
+            }
+            
+            // Usar todos los cursos en lugar de los seleccionados
+            $cursos = $todos_cursos;
+        }
 
         // Insertar inscripciones a cursos si se seleccionaron
         if (!empty($cursos)) {
