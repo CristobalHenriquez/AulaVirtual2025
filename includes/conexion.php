@@ -11,7 +11,7 @@ if ($isLocal) {
     $server = 'localhost:3307'; // Puerto de MySQL en XAMPP/MAMP (ajústalo si es necesario)
     $username = 'root';
     $password = '';
-    $database = 'ramcc_aula';
+    $database = 'ramcc';
 } else {
     // Configuración para el servidor en producción
     $server = 'localhost'; // En la mayoría de los hostings compartidos se usa 'localhost'

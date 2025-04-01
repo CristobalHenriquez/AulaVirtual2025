@@ -10,13 +10,23 @@
             </div>
         </div>
     </div>
-</div><!-- End Page Title -->
+</div>
 
 <div class="student-panel">
     <div class="text-center mb-5">
-        <h1>¡Bienvenido al aula virtual, <?php echo htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellidos']); ?>!</h1>
+        <h1>¡Bienvenido al aula virtual, <?php echo htmlspecialchars($usuario['nombre']); ?>!</h1>
         <p class="mb-2"><strong>Email:</strong> <?php echo htmlspecialchars($usuario['email']); ?></p>
-        <p><strong>Municipio/Institución:</strong> <?php echo htmlspecialchars($usuario['municipio']); ?></p>
+        <p><strong>Municipio/Institución:</strong>
+            <?php
+            if (!empty($usuario['nombre_municipio'])) {
+                echo htmlspecialchars($usuario['nombre_municipio']);
+            } elseif (!empty($usuario['municipio'])) {
+                echo htmlspecialchars($usuario['municipio']);
+            } else {
+                echo "No especificado";
+            }
+            ?>
+        </p>
     </div>
     <?php if ($is_enrolled_in_course_26 && $course_26_data): ?>
         <div class="card mb-4">
@@ -94,6 +104,15 @@
                     grid-template-columns: 1fr;
                 }
             }
+
+            /* Estilos para la sección de examen */
+            .examen-section {
+                margin-top: 1.5rem;
+                padding: 1rem;
+                background-color: #f0f7ff;
+                border-radius: 0.5rem;
+                border-left: 4px solid var(--primary-color);
+            }
         </style>
     <?php endif; ?>
 
@@ -143,6 +162,22 @@
                                                 <?php
                                                 $modulos = obtenerModulos($db, $curso['id']);
                                                 foreach ($modulos as $modulo):
+                                                    // Verificar si el módulo tiene exámenes activos
+                                                    $tiene_examen = tieneExamenesActivos($db, $modulo['id']);
+
+                                                    // Verificar si el usuario ya ha aprobado el examen de este módulo
+                                                    $examen_aprobado = false;
+                                                    if ($tiene_examen) {
+                                                        $stmt = $db->prepare("
+                                                            SELECT 1 FROM intentos_examen ie
+                                                            JOIN examenes e ON ie.examen_id = e.id
+                                                            WHERE e.modulo_id = ? AND ie.usuario_id = ? AND ie.aprobado = 1
+                                                            LIMIT 1
+                                                        ");
+                                                        $stmt->bind_param("ii", $modulo['id'], $user_id);
+                                                        $stmt->execute();
+                                                        $examen_aprobado = $stmt->get_result()->num_rows > 0;
+                                                    }
                                                 ?>
                                                     <div class="accordion-item">
                                                         <h2 class="accordion-header">
@@ -150,6 +185,13 @@
                                                                 data-bs-toggle="collapse"
                                                                 data-bs-target="#modulo<?php echo $modulo['id']; ?>">
                                                                 <?php echo htmlspecialchars($modulo['titulo']); ?>
+                                                                <?php if ($tiene_examen): ?>
+                                                                    <?php if ($examen_aprobado): ?>
+                                                                        <span class="badge bg-success ms-2">Examen completado</span>
+                                                                    <?php else: ?>
+                                                                        <span class="badge bg-primary ms-2">Examen disponible</span>
+                                                                    <?php endif; ?>
+                                                                <?php endif; ?>
                                                             </button>
                                                         </h2>
                                                         <div id="modulo<?php echo $modulo['id']; ?>"
@@ -162,7 +204,7 @@
 
                                                                 <!-- Recursos del módulo -->
                                                                 <h5 class="mt-3">Recursos:</h5>
-                                                                <ul class="list-group">
+                                                                <ul class="list-group mb-3">
                                                                     <?php
                                                                     $recursos = obtenerRecursosModulo($db, $modulo['id']);
                                                                     foreach ($recursos as $recurso):
@@ -195,6 +237,43 @@
                                                                         </li>
                                                                     <?php endforeach; ?>
                                                                 </ul>
+
+                                                                <!-- Botón de examen si existe -->
+                                                                <?php if ($tiene_examen): ?>
+                                                                    <div class="examen-section">
+                                                                        <h5 class="mb-3"><i class="bi bi-pencil-square me-2"></i>Examen</h5>
+                                                                        <?php if ($examen_aprobado): ?>
+                                                                            <p>¡Felicidades! Has completado satisfactoriamente el examen de este módulo.</p>
+                                                                            <div class="d-flex gap-2">
+                                                                                <button class="btn btn-secondary" disabled>
+                                                                                    <i class="bi bi-lock-fill me-2"></i>Examen completado
+                                                                                </button>
+                                                                                <a href="Certificado_<?php
+                                                                                                        // Obtener el ID del curso
+                                                                                                        $stmt = $db->prepare("
+                                                                                                            SELECT c.id FROM cursos c
+                                                                                                            JOIN modulos m ON c.id = m.curso_id
+                                                                                                            WHERE m.id = ?
+                                                                                                            LIMIT 1
+                                                                                                        ");
+                                                                                                        $stmt->bind_param("i", $modulo['id']);
+                                                                                                        $stmt->execute();
+                                                                                                        $curso_data = $stmt->get_result()->fetch_assoc();
+                                                                                                        $curso_id = $curso_data['id'];
+
+                                                                                                        echo $user_id . '_' . $curso_id;
+                                                                                                        ?>" class="btn btn-success" target="_blank">
+                                                                                    <i class="bi bi-award-fill me-2"></i>Ver certificado
+                                                                                </a>
+                                                                            </div>
+                                                                        <?php else: ?>
+                                                                            <p>Evalúa tus conocimientos sobre este módulo realizando el examen disponible.</p>
+                                                                            <a href="Examen_Modulo_<?php echo $modulo['id']; ?>" class="btn btn-primary">
+                                                                                <i class="bi bi-pencil-square me-2"></i>Realizar Examen
+                                                                            </a>
+                                                                        <?php endif; ?>
+                                                                    </div>
+                                                                <?php endif; ?>
                                                             </div>
                                                         </div>
                                                     </div>

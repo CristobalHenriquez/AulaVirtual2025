@@ -9,7 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $descripcion = trim($_POST['descripcion']);
         $cantidad_horas = $_POST['cantidad_horas'];
         $anio = (int)$_POST['anio'];
+        $fechas_curso = $_POST['fechas_curso'];
         $form_insc = trim($_POST['form_insc']);
+        
+        // Obtener el valor del checkbox premium (1 si está marcado, 0 si no)
+        $premium = isset($_POST['premium']) ? 1 : 0;
         
         $imagen_path = null;
         $programa_path = null;
@@ -52,19 +56,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        // Preparar la consulta SQL
-        $sql = "INSERT INTO cursos (titulo, descripcion, imagen_path, programa_pdf_path, form_insc, cantidad_horas, anio) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // Preparar la consulta SQL incluyendo el campo premium
+        $sql = "INSERT INTO cursos (titulo, descripcion, imagen_path, programa_pdf_path, form_insc, cantidad_horas, fechas_curso, anio, premium) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         if ($stmt = $db->prepare($sql)) {
-            $stmt->bind_param("ssssssi", 
+            $stmt->bind_param("sssssssis", 
                 $titulo, 
                 $descripcion, 
                 $imagen_path, 
                 $programa_path, 
                 $form_insc, 
-                $cantidad_horas, 
-                $anio
+                $cantidad_horas,
+                $fechas_curso,
+                $anio,
+                $premium
             );
             
             if ($stmt->execute()) {

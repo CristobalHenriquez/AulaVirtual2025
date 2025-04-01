@@ -8,13 +8,14 @@ include_once 'includes/head.php';
 ?>
 
 <body class="bg-light">
+
     <?php
     //INCLUYO HEADER
     include_once 'includes/header.php';
     ?>
     <main>
         <?php
-        include_once 'templates/admin-alumnos-main.php';
+        include_once 'templates/editar-examen-main.php';
         ?>
     </main>
     <!-- FOOTER Y SCRIPTS -->
@@ -23,7 +24,10 @@ include_once 'includes/head.php';
     include_once 'includes/scripts.php';
     ?>
 
+    <!-- Agregar script de SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Script para manejar las notificaciones -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             <?php
@@ -33,7 +37,7 @@ include_once 'includes/head.php';
                 title: '¡Éxito!',
                 text: '" . addslashes($_SESSION['swal_success']) . "',
                 showConfirmButton: false,
-                timer: 4000
+                timer: 1500
             });";
                 unset($_SESSION['swal_success']);
             }
@@ -50,27 +54,7 @@ include_once 'includes/head.php';
             ?>
         });
     </script>
-    <?php if (isset($_SESSION['swal_success'])): ?>
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: '<?php echo $_SESSION['swal_success']; ?>',
-            });
-        </script>
-        <?php unset($_SESSION['swal_success']); ?>
-    <?php endif; ?>
 
-    <?php if (isset($_SESSION['swal_error'])): ?>
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '<?php echo $_SESSION['swal_error']; ?>',
-            });
-        </script>
-        <?php unset($_SESSION['swal_error']); ?>
-    <?php endif; ?>
 </body>
 
 </html>

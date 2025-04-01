@@ -52,9 +52,12 @@ $recursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 <!-- BOTONES -->
 <div class="container-fluid col-lg-10 pt-3">
-    <div class="d-flex justify-content-start">
+    <div class="d-flex justify-content-between">
         <a href="editar-curso.php?id=<?php echo $modulo['curso_id']; ?>" class="btn btn-secondary shadow">
             <i class="bi bi-arrow-90deg-left me-2"></i>Volver a editar curso
+        </a>
+        <a href="editar-examen.php?modulo_id=<?php echo $modulo_id; ?>" class="btn btn-info shadow ms-2">
+            <i class="bi bi-file-earmark-text me-2"></i> Exámenes
         </a>
     </div>
 </div>

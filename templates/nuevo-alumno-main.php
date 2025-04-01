@@ -1,8 +1,18 @@
 <?php
-// Obtener todos los cursos para el formulario, ordenados por fecha de creación descendente
-$stmt = $db->prepare("SELECT id, titulo FROM cursos ORDER BY created_at DESC");
+// Obtener todos los cursos para el formulario, separados por premium y no premium
+$stmt = $db->prepare("SELECT id, titulo, premium FROM cursos ORDER BY premium DESC, created_at DESC");
 $stmt->execute();
-$cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$result = $stmt->get_result();
+$cursos_premium = [];
+$cursos_no_premium = [];
+
+while ($curso = $result->fetch_assoc()) {
+    if ($curso['premium']) {
+        $cursos_premium[] = $curso;
+    } else {
+        $cursos_no_premium[] = $curso;
+    }
+}
 
 // Obtener todos los municipios para el select del formulario
 $stmt = $db->prepare("
@@ -51,7 +61,7 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             </div>
 
                             <div class="mb-3 col-6">
-                                <label for="dni" class="form-label">DNI</label>
+                            <label for="dni" class="form-label">DNI (es recomendable para el certificado)</label>
                                 <input type="number" class="form-control" id="dni" name="dni"
                                     placeholder="No es obligatorio este campo">
                             </div>
@@ -98,7 +108,7 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="ramcc" name="ramcc" value="1">
                                 <label class="form-check-label" for="ramcc">
-                                    ¿Pertenece a la RAMCC?
+                                    <strong>RAMCC</strong> (Inscribe automáticamente en todos los cursos no premium)
                                 </label>
                             </div>
                         </div>
@@ -111,18 +121,19 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             </select>
                         </div>
 
+                        <!-- Sección de cursos no premium -->
                         <div class="mb-3">
-                            <label class="form-label">Cursos (opcional)</label>
+                            <label class="form-label fw-bold">Cursos Estándar</label>
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="selectAllCursos">
-                                <label class="form-check-label" for="selectAllCursos">
-                                    Seleccionar/Deseleccionar todos
+                                <input class="form-check-input" type="checkbox" id="selectAllNoPremium">
+                                <label class="form-check-label" for="selectAllNoPremium">
+                                    Seleccionar/Deseleccionar todos los cursos estándar
                                 </label>
                             </div>
                             <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
-                                <?php foreach ($cursos as $curso): ?>
+                                <?php foreach ($cursos_no_premium as $curso): ?>
                                     <div class="form-check">
-                                        <input class="form-check-input curso-checkbox" type="checkbox"
+                                        <input class="form-check-input curso-no-premium" type="checkbox"
                                             name="cursos[]"
                                             value="<?php echo $curso['id']; ?>"
                                             id="curso_<?php echo $curso['id']; ?>">
@@ -132,10 +143,36 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                     </div>
                                 <?php endforeach; ?>
                             </div>
+                        </div>
+                        
+                        <!-- Sección de cursos premium -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Cursos Premium</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="selectAllPremium">
+                                <label class="form-check-label" for="selectAllPremium">
+                                    Seleccionar/Deseleccionar todos los cursos premium
+                                </label>
+                            </div>
+                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                <?php foreach ($cursos_premium as $curso): ?>
+                                    <div class="form-check">
+                                        <input class="form-check-input curso-premium" type="checkbox"
+                                            name="cursos[]"
+                                            value="<?php echo $curso['id']; ?>"
+                                            id="curso_<?php echo $curso['id']; ?>">
+                                        <label class="form-check-label" for="curso_<?php echo $curso['id']; ?>">
+                                            <?php echo htmlspecialchars($curso['titulo']); ?>
+                                            <span class="badge bg-warning text-dark">Premium</span>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                             <div class="form-text">
                                 Para seleccionar más de un curso, marca las casillas correspondientes.
                             </div>
                         </div>
+                        
                         <!-- BOTONES -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success">
@@ -154,16 +191,16 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Función para manejar los checkboxes de cursos
+        // Función para manejar los checkboxes de cursos según RAMCC
         function handleCursosCheckboxes(ramccChecked) {
-            const cursosCheckboxes = document.querySelectorAll('.curso-checkbox');
-            const selectAllCheckbox = document.getElementById('selectAllCursos');
+            const cursosNoPremiumCheckboxes = document.querySelectorAll('.curso-no-premium');
+            const cursosPremiumCheckboxes = document.querySelectorAll('.curso-premium');
+            const selectAllNoPremium = document.getElementById('selectAllNoPremium');
+            const selectAllPremium = document.getElementById('selectAllPremium');
 
-            // Marcar todos los checkboxes si RAMCC está activado
-            cursosCheckboxes.forEach(checkbox => {
+            // Si RAMCC está activado, marcar todos los cursos no premium y desactivar su selección
+            cursosNoPremiumCheckboxes.forEach(checkbox => {
                 checkbox.checked = ramccChecked;
-                // No deshabilitamos los checkboxes para que se envíen con el formulario
-                // pero los hacemos readonly visualmente
                 if (ramccChecked) {
                     checkbox.setAttribute('onclick', 'return false');
                     checkbox.parentNode.classList.add('text-muted');
@@ -173,13 +210,23 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 }
             });
 
-            selectAllCheckbox.checked = ramccChecked;
+            // Configurar el checkbox "Seleccionar todos" para cursos no premium
+            selectAllNoPremium.checked = ramccChecked;
             if (ramccChecked) {
-                selectAllCheckbox.setAttribute('onclick', 'return false');
-                selectAllCheckbox.parentNode.classList.add('text-muted');
+                selectAllNoPremium.setAttribute('onclick', 'return false');
+                selectAllNoPremium.parentNode.classList.add('text-muted');
             } else {
-                selectAllCheckbox.removeAttribute('onclick');
-                selectAllCheckbox.parentNode.classList.remove('text-muted');
+                selectAllNoPremium.removeAttribute('onclick');
+                selectAllNoPremium.parentNode.classList.remove('text-muted');
+            }
+
+            // Los cursos premium siempre son seleccionables individualmente
+            // No se marcan automáticamente con RAMCC
+            if (ramccChecked) {
+                cursosPremiumCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                selectAllPremium.checked = false;
             }
         }
 
@@ -188,14 +235,22 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             handleCursosCheckboxes(this.checked);
         });
 
-        // Manejar el checkbox de seleccionar/deseleccionar todos
-        document.getElementById('selectAllCursos').addEventListener('change', function() {
+        // Manejar el checkbox de seleccionar/deseleccionar todos los cursos no premium
+        document.getElementById('selectAllNoPremium').addEventListener('change', function() {
             if (!document.getElementById('ramcc').checked) {
                 const isChecked = this.checked;
-                document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
+                document.querySelectorAll('.curso-no-premium').forEach(checkbox => {
                     checkbox.checked = isChecked;
                 });
             }
+        });
+
+        // Manejar el checkbox de seleccionar/deseleccionar todos los cursos premium
+        document.getElementById('selectAllPremium').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.querySelectorAll('.curso-premium').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
         });
     });
 </script>

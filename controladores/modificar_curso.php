@@ -12,7 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $descripcion = trim($_POST['descripcion']);
         $cantidad_horas = $_POST['cantidad_horas'];
         $anio = (int)$_POST['anio'];
+        $fechas_curso = $_POST['fechas_curso'];
         $form_insc = trim($_POST['form_insc']);
+        
+        // Obtener el valor del checkbox premium (1 si está marcado, 0 si no)
+        $premium = isset($_POST['premium']) ? 1 : 0;
 
         // Crear directorios si no existen
         $directorios = ['../uploads/cursos', '../uploads/programas', '../uploads/recursos'];
@@ -69,10 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 titulo = ?, 
                 descripcion = ?, 
                 cantidad_horas = ?, 
-                anio = ?, 
-                form_insc = ?";
-        $params = [$titulo, $descripcion, $cantidad_horas, $anio, $form_insc];
-        $types = "sssis";
+                anio = ?,
+                fechas_curso = ?, 
+                form_insc = ?,
+                premium = ?";
+        $params = [$titulo, $descripcion, $cantidad_horas, $anio, $fechas_curso, $form_insc, $premium];
+        $types = "sssissi";
 
         if (isset($imagen_path)) {
             $sql .= ", imagen_path = ?";
@@ -165,7 +171,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $db->commit();
-        $db->commit();
         $_SESSION['swal_success'] = "Curso actualizado correctamente";
     } catch (Exception $e) {
         $db->rollback();
@@ -183,4 +188,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header('Location: ../admin-cursos.php');
     exit;
 }
-

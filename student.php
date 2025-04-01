@@ -7,9 +7,14 @@ verificarAcceso();
 // Incluir conexión
 include_once 'includes/head.php';
 
-// Obtener datos del usuario
+// Obtener datos del usuario incluyendo el municipio
 $user_id = $_SESSION['id'];
-$stmt = $db->prepare("SELECT nombre, apellidos, email, municipio FROM usuarios WHERE id = ?");
+$stmt = $db->prepare("
+    SELECT u.nombre, u.email, u.municipio, u.id_municipio, m.name as nombre_municipio
+    FROM usuarios u
+    LEFT JOIN municipios m ON u.id_municipio = m.id
+    WHERE u.id = ?
+");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -138,6 +143,32 @@ function obtenerIconoRecurso($tipo)
         default:
             return 'bi bi-file-earmark';
     }
+}
+
+// Función para verificar si un módulo tiene exámenes asociados
+function tieneExamenesActivos($db, $modulo_id) {
+    $stmt = $db->prepare("
+        SELECT COUNT(*) as total 
+        FROM examenes 
+        WHERE modulo_id = ? AND activo = 1
+    ");
+    $stmt->bind_param("i", $modulo_id);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    return $result['total'] > 0;
+}
+
+// Función para verificar si un usuario ha aprobado el examen de un módulo
+function examenAprobado($db, $modulo_id, $user_id) {
+    $stmt = $db->prepare("
+        SELECT 1 FROM intentos_examen ie
+        JOIN examenes e ON ie.examen_id = e.id
+        WHERE e.modulo_id = ? AND ie.usuario_id = ? AND ie.aprobado = 1
+        LIMIT 1
+    ");
+    $stmt->bind_param("ii", $modulo_id, $user_id);
+    $stmt->execute();
+    return $stmt->get_result()->num_rows > 0;
 }
 ?>
 

@@ -86,15 +86,35 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="anio" class="form-label">Año</label>
-                            <input type="number"
+                            <label for="fechas_curso" class="form-label">Fechas del Curso</label>
+                            <input type="text"
                                 class="form-control"
-                                id="anio"
-                                name="anio"
-                                min="2000"
-                                max="2100"
-                                value="<?php echo date('Y'); ?>"
-                                required>
+                                id="fechas_curso"
+                                name="fechas_curso"
+                                placeholder="Ej: los dias 10 y 15 de abril">
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="anio" class="form-label">Año</label>
+                                <input type="number"
+                                    class="form-control"
+                                    id="anio"
+                                    name="anio"
+                                    min="2000"
+                                    max="2100"
+                                    value="<?php echo date('Y'); ?>"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-block">Tipo de Curso</label>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="premium" name="premium" value="1">
+                                    <label class="form-check-label" for="premium">
+                                        <strong>Curso Premium</strong>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="d-grid gap-2">

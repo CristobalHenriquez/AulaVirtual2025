@@ -36,19 +36,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $usuario_id = $db->insert_id;
 
-        // Si es RAMCC, inscribir en todos los cursos disponibles
+        // Si es RAMCC, inscribir automáticamente en todos los cursos no premium
         if ($ramcc) {
-            // Obtener todos los cursos
-            $stmt = $db->prepare("SELECT id FROM cursos");
+            // Obtener todos los cursos no premium
+            $stmt = $db->prepare("SELECT id FROM cursos WHERE premium = 0");
             $stmt->execute();
             $result = $stmt->get_result();
-            $todos_cursos = [];
+            $cursos_no_premium = [];
             while ($row = $result->fetch_assoc()) {
-                $todos_cursos[] = $row['id'];
+                $cursos_no_premium[] = $row['id'];
             }
             
-            // Usar todos los cursos en lugar de los seleccionados
-            $cursos = $todos_cursos;
+            // Combinar los cursos no premium con los cursos premium seleccionados manualmente
+            $cursos_premium_seleccionados = array_filter($cursos, function($curso_id) use ($db) {
+                $stmt = $db->prepare("SELECT premium FROM cursos WHERE id = ?");
+                $stmt->bind_param("i", $curso_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $curso = $result->fetch_assoc();
+                return $curso && $curso['premium'] == 1;
+            });
+            
+            // Unir los cursos no premium con los premium seleccionados
+            $cursos = array_merge($cursos_no_premium, $cursos_premium_seleccionados);
         }
 
         // Insertar inscripciones a cursos si se seleccionaron

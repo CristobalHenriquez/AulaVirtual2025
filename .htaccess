@@ -16,8 +16,21 @@ RewriteRule ^InicioDeSesion$ login.php [L]
 RewriteRule ^Inicio$ index.php [L]
 RewriteRule ^Alumno$ student.php [L]
 
+# Reglas para exámenes
+RewriteRule ^Examen_Modulo_([0-9]+)$ examen.php?modulo_id=$1 [L,QSA]
+RewriteRule ^Realizar_Examen_([0-9]+)$ examen-realizar.php?intento_id=$1 [L,QSA]
+RewriteRule ^Resultado_Examen_([0-9]+)$ examen-resultado.php?intento_id=$1 [L,QSA]
+
+# Regla para certificados
+# Agregar o modificar la regla para los certificados
+RewriteRule ^Certificado_([0-9]+)_([0-9]+)$ certificado.php?user_id=$1&curso_id=$2 [L,QSA]
+
+
+# Regla para validación de certificados
+RewriteRule ^ValidarCertificado$ validar-certificado.php [L,QSA]
 
 # Agregar la regla para contraseña
 RewriteRule ^CambiarContraseña$ reset_password.php [L]
 RewriteRule ^RecuperarContraseña$ forgot_password.php [L]
 RewriteRule ^CambiarContraseña/(.*)$ reset_password.php?token=$1 [L,QSA]
+

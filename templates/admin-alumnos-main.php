@@ -19,10 +19,29 @@ $stmt->execute();
 $result = $stmt->get_result();
 $alumnos = $result->fetch_all(MYSQLI_ASSOC);
 
-// Obtener todos los cursos para el modal, ordenados por fecha de creación descendente
-$stmt = $db->prepare("SELECT id, titulo FROM cursos ORDER BY created_at DESC");
+// Obtener todas las provincias únicas
+$provincias = [];
+foreach ($alumnos as $alumno) {
+    if (!empty($alumno['nombre_provincia']) && !in_array($alumno['nombre_provincia'], $provincias)) {
+        $provincias[] = $alumno['nombre_provincia'];
+    }
+}
+sort($provincias); // Ordenar alfabéticamente
+
+// Obtener todos los cursos para el modal, separados por premium y no premium
+$stmt = $db->prepare("SELECT id, titulo, premium FROM cursos ORDER BY premium DESC, created_at DESC");
 $stmt->execute();
-$cursos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$result = $stmt->get_result();
+$cursos_premium = [];
+$cursos_no_premium = [];
+
+while ($curso = $result->fetch_assoc()) {
+    if ($curso['premium']) {
+        $cursos_premium[] = $curso;
+    } else {
+        $cursos_no_premium[] = $curso;
+    }
+}
 
 // Obtener todos los municipios para el select del modal
 $stmt = $db->prepare("
@@ -63,11 +82,32 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 <div class="container-fluid col-lg-10 py-3">
     <div class="card shadow-lg">
         <div class="card-body">
+            <!-- Agregar el select de provincias antes de la tabla -->
+            <div class="mb-3">
+                <select id="filtro-provincia" class="form-select form-select-sm" style="width: auto;">
+                    <option value="">Todas las provincias</option>
+                    <?php
+                    $provincias = [];
+                    foreach ($alumnos as $alumno) {
+                        if (!empty($alumno['nombre_provincia']) && !in_array($alumno['nombre_provincia'], $provincias)) {
+                            $provincias[] = $alumno['nombre_provincia'];
+                        }
+                    }
+                    sort($provincias); // Ordenar alfabéticamente
+                    foreach ($provincias as $provincia):
+                    ?>
+                        <option value="<?php echo htmlspecialchars($provincia); ?>">
+                            <?php echo htmlspecialchars($provincia); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <div class="table-responsive">
                 <table id="tablaAlumnos" class="table table-striped">
                     <thead>
                         <tr>
                             <th>Nombre</th>
+                            <th>Email</th>
                             <th>Municipio</th>
                             <th>Provincia</th>
                             <th>Institución</th>
@@ -80,17 +120,18 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <?php foreach ($alumnos as $alumno): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($alumno['nombre']); ?></td>
+                                <td><?php echo htmlspecialchars($alumno['email']); ?></td>
                                 <td>
-                                    <?php 
-                                    echo !empty($alumno['nombre_municipio']) ? 
-                                        htmlspecialchars($alumno['nombre_municipio']) : 
+                                    <?php
+                                    echo !empty($alumno['nombre_municipio']) ?
+                                        htmlspecialchars($alumno['nombre_municipio']) :
                                         "Sin municipio asociado";
                                     ?>
                                 </td>
                                 <td>
-                                    <?php 
-                                    echo !empty($alumno['nombre_provincia']) ? 
-                                        htmlspecialchars($alumno['nombre_provincia']) : 
+                                    <?php
+                                    echo !empty($alumno['nombre_provincia']) ?
+                                        htmlspecialchars($alumno['nombre_provincia']) :
                                         "-";
                                     ?>
                                 </td>
@@ -111,6 +152,7 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                     <button class="btn btn-warning btn-circle btn-sm editar-alumno"
                                         data-id="<?php echo $alumno['id']; ?>"
                                         data-nombre="<?php echo htmlspecialchars($alumno['nombre']); ?>"
+                                        data-dni="<?php echo htmlspecialchars($alumno['dni']); ?>"
                                         data-email="<?php echo htmlspecialchars($alumno['email']); ?>"
                                         data-municipio="<?php echo htmlspecialchars($alumno['municipio']); ?>"
                                         data-estado="<?php echo htmlspecialchars($alumno['estado']); ?>"
@@ -138,7 +180,7 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 <!-- Modal Editar Usuario -->
 <div class="modal fade" id="editarUsuarioModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Editar Usuario</h5>
@@ -152,6 +194,10 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <input type="text" class="form-control" id="nombre" name="nombre" required>
                     </div>
                     <div class="mb-3">
+                        <label for="dni" class="form-label">DNI (es recomendable para el certificado)</label>
+                        <input type="number" class="form-control" id="dni" name="dni">
+                    </div>
+                    <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
@@ -161,7 +207,7 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <option value="">Sin municipio asociado</option>
                             <?php foreach ($municipios as $municipio): ?>
                                 <option value="<?php echo $municipio['id']; ?>">
-                                    <?php echo htmlspecialchars($municipio['nombre_municipio']); ?> 
+                                    <?php echo htmlspecialchars($municipio['nombre_municipio']); ?>
                                     <?php if (!empty($municipio['nombre_provincia'])): ?>
                                         (<?php echo htmlspecialchars($municipio['nombre_provincia']); ?>)
                                     <?php endif; ?>
@@ -181,27 +227,54 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="ramcc" name="ramcc" value="1">
                             <label class="form-check-label" for="ramcc">
-                                RAMCC
+                                <strong>RAMCC</strong> (Inscribe automáticamente en todos los cursos no premium)
                             </label>
                         </div>
                     </div>
+                    
+                    <!-- Sección de cursos no premium -->
                     <div class="mb-3">
-                        <label class="form-label">Cursos</label>
+                        <label class="form-label fw-bold">Cursos Estándar</label>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="selectAllCursos">
-                            <label class="form-check-label" for="selectAllCursos">
-                                Seleccionar/Deseleccionar todos
+                            <input class="form-check-input" type="checkbox" id="selectAllNoPremium">
+                            <label class="form-check-label" for="selectAllNoPremium">
+                                Seleccionar/Deseleccionar todos los cursos estándar
                             </label>
                         </div>
                         <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
-                            <?php foreach ($cursos as $curso): ?>
+                            <?php foreach ($cursos_no_premium as $curso): ?>
                                 <div class="form-check">
-                                    <input class="form-check-input curso-checkbox" type="checkbox"
+                                    <input class="form-check-input curso-no-premium" type="checkbox"
                                         name="cursos[]"
                                         value="<?php echo $curso['id']; ?>"
                                         id="curso_<?php echo $curso['id']; ?>">
                                     <label class="form-check-label" for="curso_<?php echo $curso['id']; ?>">
                                         <?php echo htmlspecialchars($curso['titulo']); ?>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección de cursos premium -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Cursos Premium</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="selectAllPremium">
+                            <label class="form-check-label" for="selectAllPremium">
+                                Seleccionar/Deseleccionar todos los cursos premium
+                            </label>
+                        </div>
+                        <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                            <?php foreach ($cursos_premium as $curso): ?>
+                                <div class="form-check">
+                                    <input class="form-check-input curso-premium" type="checkbox"
+                                        name="cursos[]"
+                                        value="<?php echo $curso['id']; ?>"
+                                        id="curso_<?php echo $curso['id']; ?>">
+                                    <label class="form-check-label" for="curso_<?php echo $curso['id']; ?>">
+                                        <?php echo htmlspecialchars($curso['titulo']); ?> 
+                                        <span class="badge bg-warning text-dark">Premium</span>
                                     </label>
                                 </div>
                             <?php endforeach; ?>
@@ -247,13 +320,17 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         border-radius: 4px;
         padding: 0.375rem 0.75rem;
     }
+
+    #filtro-provincia {
+        min-width: 200px;
+    }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Inicializar DataTable
-        new DataTable('#tablaAlumnos', {
+        const table = new DataTable('#tablaAlumnos', {
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
             },
@@ -269,20 +346,27 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             lengthMenu: [
                 [10, 25, 50, -1],
                 [10, 25, 50, "Todos"]
-            ],
-            dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rtip'
+            ]
         });
 
-        // Función para manejar los checkboxes de cursos
+        // Configurar el filtro de provincias
+        $('#filtro-provincia').on('change', function() {
+            const provinciaSeleccionada = $(this).val();
+
+            // Aplicar filtro a la columna de provincia (índice 2)
+            table.column(2).search(provinciaSeleccionada).draw();
+        });
+
+        // Función para manejar los checkboxes de cursos según RAMCC
         function handleCursosCheckboxes(ramccChecked) {
-            const cursosCheckboxes = document.querySelectorAll('.curso-checkbox');
-            const selectAllCheckbox = document.getElementById('selectAllCursos');
-            
-            // Marcar todos los checkboxes si RAMCC está activado
-            cursosCheckboxes.forEach(checkbox => {
+            const cursosNoPremiumCheckboxes = document.querySelectorAll('.curso-no-premium');
+            const cursosPremiumCheckboxes = document.querySelectorAll('.curso-premium');
+            const selectAllNoPremium = document.getElementById('selectAllNoPremium');
+            const selectAllPremium = document.getElementById('selectAllPremium');
+
+            // Si RAMCC está activado, marcar todos los cursos no premium y desactivar su selección
+            cursosNoPremiumCheckboxes.forEach(checkbox => {
                 checkbox.checked = ramccChecked;
-                // No deshabilitamos los checkboxes para que se envíen con el formulario
-                // pero los hacemos readonly visualmente
                 if (ramccChecked) {
                     checkbox.setAttribute('onclick', 'return false');
                     checkbox.parentNode.classList.add('text-muted');
@@ -291,14 +375,24 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     checkbox.parentNode.classList.remove('text-muted');
                 }
             });
-            
-            selectAllCheckbox.checked = ramccChecked;
+
+            // Configurar el checkbox "Seleccionar todos" para cursos no premium
+            selectAllNoPremium.checked = ramccChecked;
             if (ramccChecked) {
-                selectAllCheckbox.setAttribute('onclick', 'return false');
-                selectAllCheckbox.parentNode.classList.add('text-muted');
+                selectAllNoPremium.setAttribute('onclick', 'return false');
+                selectAllNoPremium.parentNode.classList.add('text-muted');
             } else {
-                selectAllCheckbox.removeAttribute('onclick');
-                selectAllCheckbox.parentNode.classList.remove('text-muted');
+                selectAllNoPremium.removeAttribute('onclick');
+                selectAllNoPremium.parentNode.classList.remove('text-muted');
+            }
+
+            // Los cursos premium siempre son seleccionables individualmente
+            // No se marcan automáticamente con RAMCC
+            if (ramccChecked) {
+                cursosPremiumCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                selectAllPremium.checked = false;
             }
         }
 
@@ -307,14 +401,22 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             handleCursosCheckboxes(this.checked);
         });
 
-        // Manejar el checkbox de seleccionar/deseleccionar todos
-        document.getElementById('selectAllCursos').addEventListener('change', function() {
+        // Manejar el checkbox de seleccionar/deseleccionar todos los cursos no premium
+        document.getElementById('selectAllNoPremium').addEventListener('change', function() {
             if (!document.getElementById('ramcc').checked) {
                 const isChecked = this.checked;
-                document.querySelectorAll('.curso-checkbox').forEach(checkbox => {
+                document.querySelectorAll('.curso-no-premium').forEach(checkbox => {
                     checkbox.checked = isChecked;
                 });
             }
+        });
+
+        // Manejar el checkbox de seleccionar/deseleccionar todos los cursos premium
+        document.getElementById('selectAllPremium').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.querySelectorAll('.curso-premium').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
         });
 
         // Manejar el clic en el botón de editar
@@ -322,6 +424,7 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             button.addEventListener('click', function() {
                 const id = this.dataset.id;
                 const nombre = this.dataset.nombre;
+                const dni = this.dataset.dni;
                 const email = this.dataset.email;
                 const municipio = this.dataset.municipio;
                 const estado = this.dataset.estado;
@@ -337,6 +440,7 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 // Establecer valores en el formulario
                 document.getElementById('usuario_id').value = id;
                 document.getElementById('nombre').value = nombre;
+                document.getElementById('dni').value = dni;
                 document.getElementById('email').value = email;
                 document.getElementById('municipio').value = municipio;
                 document.getElementById('estado').value = estado;
@@ -346,15 +450,13 @@ $municipios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 // Manejar los checkboxes de cursos según el estado de RAMCC
                 handleCursosCheckboxes(ramcc);
 
-                // Si no es RAMCC, marcar solo los cursos del alumno
-                if (!ramcc) {
-                    cursoIds.forEach(cursoId => {
-                        const checkbox = document.getElementById(`curso_${cursoId}`);
-                        if (checkbox) {
-                            checkbox.checked = true;
-                        }
-                    });
-                }
+                // Marcar los cursos del alumno
+                cursoIds.forEach(cursoId => {
+                    const checkbox = document.getElementById(`curso_${cursoId}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
 
                 // Mostrar el modal
                 const modal = new bootstrap.Modal(document.getElementById('editarUsuarioModal'));
